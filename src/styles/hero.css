@@ -1,0 +1,300 @@
+/**
+ * Hero.
+ *
+ * La pieza clave es `.hero__stage`: un contenedor que mantiene siempre la
+ * relacion 1024/1536 de la fotografia original y que se dimensiona para cubrir
+ * su marco. La imagen y los hotspots son hijos suyos, asi que las coordenadas
+ * en porcentaje de `hotspots.ts` caen sobre el mismo objeto de la foto en
+ * cualquier ancho, sin recalcular nada en JavaScript.
+ *
+ * El escenario sobresale `--photo-bleed` por cada lado del marco recortado.
+ * Esa holgura oculta es lo que permite mover la escena sin descubrir un borde.
+ *
+ * En movil la fotografia ocupa una banda alta y el texto vive debajo, sobre
+ * crema. En escritorio se reparte en dos columnas. Ninguna de las dos tapa el
+ * movil, los animales ni los banderines tejidos: el layout se adapta a la
+ * fotografia, no al reves.
+ */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: var(--photo-height) 1fr;
+  background: var(--cream);
+}
+
+/* --- Marco y escenario -------------------------------------------------- */
+
+.hero__frame {
+  position: relative;
+  overflow: hidden;
+  background: var(--beige);
+}
+
+.hero__stage {
+  position: absolute;
+  top: calc(-1 * var(--photo-bleed-top));
+  left: 50%;
+  transform: translateX(-50%);
+  aspect-ratio: 1024 / 1536;
+  width: max(
+    calc(100% + 2 * var(--photo-bleed)),
+    calc((var(--photo-height) + 2 * var(--photo-bleed)) * 1024 / 1536)
+  );
+  /* `translate` queda libre para el parallax, sin pisar el `transform`
+     que centra el escenario. */
+  translate: 0 0;
+  will-change: translate;
+}
+
+.hero__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+
+/* Transicion suave hacia la banda de texto, sin degradado sobre la escena. */
+.hero__frame::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 12%;
+  background: linear-gradient(to bottom, transparent, var(--cream));
+  pointer-events: none;
+}
+
+/* --- Hotspots ----------------------------------------------------------- */
+
+.hero__hotspots {
+  position: absolute;
+  inset: 0;
+}
+
+/*
+ * Dos capas superpuestas: los objetos del movil y las trece letras.
+ *
+ * Los contenedores cubren el escenario entero, asi que el segundo taparia al
+ * primero y se quedaria con los clics destinados a los animales. Se les quita
+ * el puntero y se lo devuelve solo a los botones.
+ */
+.hotspot-group {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hotspot {
+  position: absolute;
+  pointer-events: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 46% / 38%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  /* La zona es un control, no texto: no debe poder seleccionarse ni abrir el
+     menu de "copiar" al mantener pulsado. */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  /* Suelo del objetivo tactil. El desplazamiento que mantiene centrada la zona
+     sobre el objeto de la fotografia lo calcula hero.ts, que es quien conoce
+     el tamano real del escenario en cada momento. */
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/*
+ * Respuesta visual al tocar un objeto.
+ *
+ * Es estrictamente local: un halo calido sobre ese objeto y un anillo que se
+ * abre y se apaga. La fotografia no se desplaza ni se deforma, porque no
+ * existe una capa independiente del peluche o de la letra que se pueda mover
+ * sin partir la imagen. Antes que mover la escena entera para fingirlo, se
+ * responde donde el usuario ha tocado.
+ */
+.hotspot::before {
+  content: "";
+  position: absolute;
+  inset: -24%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 244 228 / 0.62),
+    rgb(255 244 228 / 0) 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hotspot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 46% / 38%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hotspot.is-active::before {
+  animation: hotspot-bloom 760ms var(--ease-soft);
+}
+
+.hotspot.is-active::after {
+  animation: hotspot-ring 760ms var(--ease-soft);
+}
+
+@keyframes hotspot-bloom {
+  0% {
+    opacity: 0;
+    scale: 0.86;
+  }
+  20% {
+    opacity: 1;
+    scale: 1;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.06;
+  }
+}
+
+@keyframes hotspot-ring {
+  0% {
+    opacity: 0.85;
+    box-shadow: 0 0 0 0 rgb(255 246 233 / 0.55);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: 0 0 0 16px rgb(255 246 233 / 0);
+  }
+}
+
+/*
+ * Foco de teclado: doble anillo, claro por dentro y oscuro por fuera, para que
+ * se distinga tanto sobre la pared clara como sobre la madera del suelo. Nunca
+ * hay un rectangulo permanente sobre la fotografia: solo aparece al navegar
+ * con teclado.
+ */
+.hotspot:focus-visible {
+  outline: 2px solid var(--ivory);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgb(85 69 59 / 0.55);
+}
+
+.hotspot:focus-visible::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hotspot.is-active::before,
+  .hotspot.is-active::after {
+    animation: none;
+  }
+}
+
+/* --- Texto del hero ----------------------------------------------------- */
+
+.hero__copy {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 1.125rem;
+  padding: clamp(1.5rem, 5vw, 2.5rem) var(--space-gutter)
+    clamp(1.75rem, 5vw, 2.5rem);
+  text-align: center;
+}
+
+.hero__line {
+  font-family: var(--font-display);
+  font-size: clamp(1.1875rem, 4.6vw, 1.5rem);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.32;
+  color: var(--taupe-deep);
+  max-width: 22ch;
+  text-wrap: balance;
+}
+
+.scroll-cue {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: var(--taupe-soft);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.scroll-cue__arrow {
+  font-size: 1.125rem;
+  line-height: 1;
+  animation: scroll-cue-drift 3.2s var(--ease-soft) infinite;
+}
+
+@keyframes scroll-cue-drift {
+  0%,
+  100% {
+    translate: 0 0;
+    opacity: 0.55;
+  }
+  50% {
+    translate: 0 5px;
+    opacity: 1;
+  }
+}
+
+/* --- Escritorio: dos columnas ------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .hero {
+    grid-template-rows: 100svh;
+    grid-template-columns: 45fr 55fr;
+  }
+
+  .hero__frame {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .hero__copy {
+    grid-column: 1;
+    grid-row: 1;
+    justify-items: start;
+    text-align: left;
+    gap: 1.5rem;
+    padding-inline: clamp(3rem, 6vw, 6rem);
+  }
+
+  .hero__line {
+    font-size: clamp(1.375rem, 2vw, 1.75rem);
+    max-width: 16ch;
+  }
+
+  .scroll-cue {
+    justify-items: start;
+    padding-inline: 0;
+    margin-top: 1rem;
+  }
+
+  /* Sin banda de texto debajo, el degradado inferior ya no tiene sentido. */
+  .hero__frame::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue__arrow {
+    animation: none;
+  }
+
+  .hero__stage {
+    will-change: auto;
+  }
+}

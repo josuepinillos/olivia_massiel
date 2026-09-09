@@ -1,0 +1,248 @@
+/**
+ * "Tu nombre tiene una melodía".
+ *
+ * Una pequeña instalación textil dentro de la invitación: un campo discreto y,
+ * debajo, las piezas de crochet colgadas con la irregularidad justa para que no
+ * parezcan una cuadrícula. Nada de teclado virtual ni de generador.
+ */
+
+.section--ivory {
+  background: var(--ivory);
+}
+
+/*
+ * Puente hacia la fotografía del hero.
+ *
+ * Texto de transición, no reclamo: serif en cursiva como el resto del hilo
+ * editorial, pero más pequeño y más suave que la línea que tiene encima, para
+ * que no compita ni con el título ni con las piezas bordadas. Todo el peso lo
+ * lleva el aire que lo rodea; ni caja, ni filete, ni fondo.
+ */
+.name-melody__bridge {
+  max-width: 38ch;
+  margin: clamp(1.75rem, 5vw, 2.5rem) auto 0;
+  font-family: var(--font-display);
+  font-size: clamp(0.9375rem, 3.2vw, 1.0625rem);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--taupe-soft);
+  text-wrap: balance;
+}
+
+/* --- El campo ------------------------------------------------------------- */
+
+.name-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem 1.25rem;
+  width: min(100%, 30rem);
+  margin: clamp(2.25rem, 7vw, 3.25rem) auto 0;
+}
+
+.name-form__field {
+  flex: 1 1 13rem;
+  min-width: 0;
+}
+
+.name-form__input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.5rem 0.25rem;
+  border: 0;
+  border-bottom: 1px solid var(--line-strong);
+  border-radius: 0;
+  background: transparent;
+  color: var(--taupe-deep);
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  text-align: center;
+  transition: border-color 320ms var(--ease-soft);
+}
+
+.name-form__input::placeholder {
+  color: var(--taupe-soft);
+  font-style: italic;
+  opacity: 1;
+}
+
+.name-form__input:focus {
+  outline: none;
+  border-bottom-color: var(--blush-ink);
+}
+
+.name-form__input:focus-visible {
+  outline: 2px solid var(--blush-ink);
+  outline-offset: 6px;
+  border-radius: 2px;
+}
+
+/* --- Las piezas ----------------------------------------------------------- */
+
+.name-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  /* Separación entre letras y, con más aire, entre palabras. */
+  gap: clamp(1.5rem, 5vw, 2.25rem);
+  margin-top: clamp(2.25rem, 7vw, 3.25rem);
+}
+
+.name-pieces:empty {
+  margin-top: 0;
+}
+
+.name-word {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.name-letter {
+  --tilt: 0deg;
+  --lift: 0px;
+  display: grid;
+  place-items: end center;
+  /* Ancho mínimo del objetivo táctil: la I es mucho más estrecha que la M. */
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  rotate: var(--tilt);
+  translate: 0 var(--lift);
+  -webkit-tap-highlight-color: transparent;
+  /* Es un control, no texto: no debe seleccionarse ni arrastrarse. */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.name-letter__art {
+  height: clamp(3.5rem, 13vw, 5.5rem);
+  width: auto;
+  max-width: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  filter: drop-shadow(0 6px 10px rgb(90 70 58 / 0.1));
+  transition: filter 320ms var(--ease-soft);
+}
+
+.name-letter:hover .name-letter__art,
+.name-letter:focus-visible .name-letter__art {
+  filter: drop-shadow(0 10px 16px rgb(90 70 58 / 0.18));
+}
+
+.name-letter:focus-visible {
+  outline: 2px solid var(--blush-ink);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/*
+ * Pieza de espera: solo para las letras cuyo WebP todavía no es utilizable.
+ * No imita el bordado a propósito — se ve que falta la pieza, y debajo del
+ * nombre se dice cuáles son.
+ */
+.name-letter__pending {
+  display: grid;
+  place-items: center;
+  height: clamp(3.5rem, 13vw, 5.5rem);
+  aspect-ratio: 3 / 4;
+  border: 1px dashed var(--line-strong);
+  border-radius: 10px;
+  background: rgb(201 160 146 / 0.12);
+  color: var(--taupe-soft);
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 6vw, 2.25rem);
+  line-height: 1;
+}
+
+/* --- Movimiento ----------------------------------------------------------- */
+
+/*
+ * La aparicion escalonada va en una clase aparte, no en `.name-letter`.
+ *
+ * Si estuviera en la pieza y el navegador no llegara a ejecutar la animacion
+ * —pestana en segundo plano, animaciones desactivadas—, `backwards` dejaria la
+ * letra congelada en su fotograma inicial: invisible. Asi el estado por defecto
+ * es "visible" y la animacion solo puede mejorarlo.
+ */
+.name-letter.is-entering {
+  animation: letter-in 620ms var(--ease-soft) backwards;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.name-letter.is-pressed,
+.name-letter.is-playing {
+  animation: letter-press 520ms var(--ease-soft);
+}
+
+@keyframes letter-press {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  28% {
+    transform: translateY(-8px) rotate(-1.5deg);
+  }
+  60% {
+    transform: translateY(1px) rotate(0.8deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+/* --- Textos auxiliares ---------------------------------------------------- */
+
+.name-melody__hint {
+  margin-top: clamp(1.75rem, 5vw, 2.25rem);
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--taupe-soft);
+}
+
+.name-melody__missing {
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  color: var(--taupe-soft);
+  max-width: 30ch;
+  margin-inline: auto;
+}
+
+.name-melody__play {
+  margin-top: clamp(1.5rem, 4vw, 2rem);
+}
+
+@media (min-width: 1024px) {
+  .name-pieces {
+    gap: 2.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .name-letter.is-entering,
+  .name-letter.is-pressed,
+  .name-letter.is-playing {
+    animation: none;
+  }
+}

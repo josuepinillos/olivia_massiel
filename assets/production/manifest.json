@@ -1,0 +1,25 @@
+{
+  "hero": "assets/hero.webp",
+  "interactive_layers": [
+    "assets/mobile-ring.webp",
+    "assets/lion.webp",
+    "assets/elephant.webp",
+    "assets/zebra.webp",
+    "assets/giraffe.webp"
+  ],
+  "decorative_layers": [
+    "assets/pom-pom-left.webp",
+    "assets/pom-pom-mid-left.webp",
+    "assets/pom-pom-mid-right.webp",
+    "assets/pom-pom-right.webp",
+    "assets/star-left.webp",
+    "assets/star-center.webp",
+    "assets/star-right.webp",
+    "assets/star-bottom.webp"
+  ],
+  "name_reference": [
+    "assets/banner-olivia.webp",
+    "assets/banner-massiel.webp"
+  ],
+  "note": "Hero uses the latest approved nursery photograph; transparent overlays are reusable interaction assets."
+}

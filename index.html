@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f3ebe2" />
+
+    <title>{{event.babyName}} · {{event.occasion}}</title>
+    <meta
+      name="description"
+      content="{{event.occasion}} de {{event.babyName}}. {{event.dateLabel}}, {{event.timeLabel}}. {{event.venue}}, {{event.address}}."
+    />
+
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="{{event.babyName}} · {{event.occasion}}"
+    />
+    <meta
+      property="og:description"
+      content="{{event.dateLabel}} · {{event.timeLabel}} · {{event.venue}}"
+    />
+    <meta property="og:image" content="./images/hero.webp" />
+    <meta property="og:locale" content="es_PE" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@200;300;400;500&display=swap"
+    />
+    <link rel="preload" as="image" href="./images/hero.webp" />
+
+    <script>
+      // Marca temprano que hay JavaScript, antes del primer pintado, para que
+      // las secciones que van a aparecer con scroll no parpadeen. Sin JS la
+      // clase nunca se anade y todo el contenido queda visible desde el inicio.
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#invitacion">Saltar al contenido</a>
+
+    <!-- ==================== BARRA SUPERIOR + MENU ==================== -->
+    <header class="topbar" data-nav data-open="false" data-condensed="false">
+      <span class="topbar__mark" aria-hidden="true">&#9825;</span>
+
+      <div class="topbar__actions">
+        <button
+          type="button"
+          class="sound-toggle"
+          data-sound-toggle
+          aria-pressed="true"
+        >
+          <span class="sound-toggle__dot" aria-hidden="true"></span>
+        </button>
+
+        <button
+          type="button"
+          class="nav-toggle"
+          data-nav-toggle
+          aria-expanded="false"
+          aria-controls="nav-panel"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="nav-scrim" data-nav-scrim aria-hidden="true"></div>
+
+      <nav
+        id="nav-panel"
+        class="nav-panel"
+        data-nav-panel
+        aria-label="{{copy.nav.label}}"
+      >
+        <ul class="nav-panel__list" data-nav-list></ul>
+        <p class="nav-panel__sign">
+          <span>{{event.babyName}}</span>
+          <em>Una dulce espera…</em>
+        </p>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ==================== HERO ==================== -->
+      <section id="inicio" class="hero" aria-labelledby="hero-eyebrow">
+        <div class="hero__frame">
+          <div class="hero__stage">
+            <img
+              class="hero__photo"
+              src="./images/hero.webp"
+              width="1024"
+              height="1536"
+              alt="{{copy.hero.photoAlt}}"
+              fetchpriority="high"
+              decoding="async"
+              draggable="false"
+            />
+            <!-- Botones transparentes sobre los objetos reales de la foto.
+                 Se generan desde src/data/hotspots.ts. -->
+            <div class="hero__hotspots"></div>
+          </div>
+        </div>
+
+        <div class="hero__copy">
+          <p class="eyebrow" id="hero-eyebrow">{{copy.hero.eyebrow}}</p>
+          <p class="hero__line">{{copy.hero.line}}</p>
+          <a class="scroll-cue" href="#invitacion">
+            <span>{{copy.hero.scrollCue}}</span>
+            <span class="scroll-cue__arrow" aria-hidden="true">&#8595;</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ==================== INVITACION ==================== -->
+      <section id="invitacion" class="section section--cream">
+        <div class="section__inner" data-reveal>
+          <span class="ornament" aria-hidden="true">&#10038;</span>
+          <p class="eyebrow">{{copy.invitation.eyebrow}}</p>
+          <h2 class="display">
+            {{copy.invitation.titleLead}}<br />{{copy.invitation.titleTail}}
+            <em>{{event.babyName}}</em>
+          </h2>
+
+          <dl class="facts">
+            <div class="facts__row">
+              <dt>{{copy.invitation.dateTag}}</dt>
+              <dd>
+                <time datetime="{{event.isoDate}}">{{event.dateLabel}}</time>
+              </dd>
+            </div>
+            <div class="facts__row">
+              <dt>{{copy.invitation.timeTag}}</dt>
+              <dd>
+                {{event.timeLabel}}
+                <span class="facts__hint">{{event.timeZoneLabel}}</span>
+              </dd>
+            </div>
+            <div class="facts__row">
+              <dt>{{copy.invitation.venueTag}}</dt>
+              <dd>
+                {{event.venue}}
+                <span class="facts__hint">{{event.address}}</span>
+              </dd>
+            </div>
+          </dl>
+
+          <a
+            class="button button--filled"
+            href="{{event.mapsUrl}}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{copy.invitation.cta}}
+          </a>
+        </div>
+      </section>
+
+      <!-- ==================== LA ESPERA ==================== -->
+      <section id="espera" class="section section--sand section--tight">
+        <div class="section__inner section__inner--narrow" data-reveal>
+          <span class="ornament" aria-hidden="true">&#10038;</span>
+          <p class="eyebrow">{{copy.waiting.eyebrow}}</p>
+          <h2 class="display display--lead">{{copy.waiting.title}}</h2>
+          <p class="prose">{{copy.waiting.paragraphs.0}}</p>
+          <p class="prose">{{copy.waiting.paragraphs.1}}</p>
+          <p class="signature">{{event.babyName}}</p>
+        </div>
+
+        <!-- Mismo archivo que el hero: ya esta en cache, y el encuadre se hace
+             con object-position en vez de servir una segunda imagen. -->
+        <figure class="plate" data-reveal>
+          <img
+            src="./images/hero.webp"
+            width="1024"
+            height="1536"
+            alt=""
+            loading="lazy"
+            decoding="async"
+            style="object-position: 48% 12%"
+          />
+        </figure>
+      </section>
+
+      <!-- ============= TU NOMBRE TIENE UNA MELODÍA ============= -->
+      <section id="tu-nombre" class="section section--ivory">
+        <div class="section__inner" data-reveal>
+          <span class="ornament" aria-hidden="true">&#10038;</span>
+          <p class="eyebrow">{{copy.nameMelody.eyebrow}}</p>
+          <h2 class="display display--lead">{{copy.nameMelody.title}}</h2>
+          <p class="prose">{{copy.nameMelody.lead}}</p>
+
+          <p class="name-melody__bridge">{{copy.nameMelody.bridge}}</p>
+
+          <form class="name-form" data-name-form novalidate>
+            <span class="name-form__field">
+              <label class="visually-hidden" for="nombre-invitado"
+                >{{copy.nameMelody.label}}</label
+              >
+              <input
+                id="nombre-invitado"
+                class="name-form__input"
+                data-name-input
+                type="text"
+                name="nombre"
+                placeholder="{{copy.nameMelody.placeholder}}"
+                maxlength="24"
+                autocomplete="given-name"
+                autocapitalize="words"
+                spellcheck="false"
+              />
+            </span>
+            <button type="submit" class="button button--filled">
+              {{copy.nameMelody.cta}}
+            </button>
+          </form>
+
+          <!-- Las piezas se generan desde src/data/letterNotes.ts: una por
+               letra, cada una con su propio boton y su propia nota. -->
+          <div class="name-pieces" data-name-pieces aria-live="polite"></div>
+
+          <p class="name-melody__hint" data-name-hint hidden></p>
+          <p class="name-melody__missing" data-name-missing hidden></p>
+
+          <button type="button" class="button name-melody__play" data-name-play hidden>
+            {{copy.nameMelody.play}}
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================== CUENTA REGRESIVA ==================== -->
+      <section id="cuenta" class="section section--cream countdown">
+        <div class="countdown__decor" aria-hidden="true">
+          <img src="./images/pom-pom-left.webp" width="65" height="95" alt="" loading="lazy" style="--x: 12%; --y: 18%; --d: 0s" />
+          <img src="./images/star-left.webp" width="65" height="75" alt="" loading="lazy" style="--x: 78%; --y: 12%; --d: -1.4s" />
+          <img src="./images/pom-pom-mid-right.webp" width="70" height="90" alt="" loading="lazy" style="--x: 86%; --y: 62%; --d: -2.6s" />
+          <img src="./images/star-bottom.webp" width="75" height="80" alt="" loading="lazy" style="--x: 8%; --y: 72%; --d: -3.4s" />
+        </div>
+
+        <div class="section__inner" data-reveal>
+          <span class="ornament" aria-hidden="true">&#10038;</span>
+          <p class="eyebrow">{{copy.countdown.eyebrow}}</p>
+
+          <ol class="clock">
+            <li>
+              <strong data-unit="days">--</strong>
+              <span>{{copy.countdown.units.days}}</span>
+            </li>
+            <li>
+              <strong data-unit="hours">--</strong>
+              <span>{{copy.countdown.units.hours}}</span>
+            </li>
+            <li>
+              <strong data-unit="minutes">--</strong>
+              <span>{{copy.countdown.units.minutes}}</span>
+            </li>
+            <li>
+              <strong data-unit="seconds">--</strong>
+              <span>{{copy.countdown.units.seconds}}</span>
+            </li>
+          </ol>
+
+          <p class="countdown__note" data-countdown-note>
+            {{copy.countdown.note}}
+          </p>
+        </div>
+      </section>
+
+      <!-- ==================== CONFIRMACION ==================== -->
+      <section id="confirmar" class="section section--sand">
+        <div class="section__inner section__inner--narrow" data-reveal>
+          <span class="ornament ornament--heart" aria-hidden="true">&#9825;</span>
+          <p class="eyebrow">{{copy.rsvpSection.eyebrow}}</p>
+          <h2 class="display display--lead">{{copy.rsvpSection.title}}</h2>
+          <p class="prose">{{copy.rsvpSection.lead}}</p>
+
+          <form class="rsvp-form" data-rsvp-form novalidate>
+            <label class="visually-hidden" for="rsvp-nombre"
+              >{{copy.rsvpSection.label}}</label
+            >
+            <input
+              id="rsvp-nombre"
+              class="rsvp-form__input"
+              data-rsvp-input
+              type="text"
+              name="nombre"
+              placeholder="{{copy.rsvpSection.placeholder}}"
+              maxlength="100"
+              autocomplete="name"
+              autocapitalize="words"
+              enterkeyhint="send"
+            />
+
+            <!-- Trampa para bots: fuera de la vista y fuera del orden de
+                 tabulación. Quien la rellena no es una persona. -->
+            <div class="rsvp-form__trap" aria-hidden="true">
+              <label for="rsvp-website">No rellenar este campo</label>
+              <input
+                id="rsvp-website"
+                type="text"
+                name="website"
+                data-rsvp-trap
+                tabindex="-1"
+                autocomplete="off"
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="button button--filled rsvp-form__submit"
+              data-rsvp-submit
+            >
+              {{copy.rsvpSection.cta}}
+            </button>
+          </form>
+
+          <p class="rsvp-form__message" data-rsvp-message role="status" hidden></p>
+          <p class="rsvp-form__privacy">{{copy.rsvpSection.privacy}}</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- ==================== CIERRE ==================== -->
+    <footer class="section section--cream closing">
+      <div class="section__inner" data-reveal>
+        <span class="ornament ornament--heart" aria-hidden="true">&#9825;</span>
+        <p class="eyebrow">{{copy.closing.eyebrow}}</p>
+        <h2 class="display display--name">
+          <span>{{event.babyNameLines.0}}</span>
+          <span>{{event.babyNameLines.1}}</span>
+        </h2>
+        <p class="prose">{{copy.closing.line}}</p>
+        <p class="closing__meta">
+          {{copy.credit.lead}} <strong>{{copy.credit.word}}</strong>
+          {{copy.credit.tail}}
+          <a
+            class="closing__credit"
+            href="{{copy.credit.url}}"
+            target="_blank"
+            rel="noopener noreferrer"
+            >{{copy.credit.name}}</a
+          >
+        </p>
+      </div>
+    </footer>
+
+    <!-- ==================== CONFIRMACIÓN ==================== -->
+    <div class="rsvp-modal" data-rsvp-modal hidden>
+      <div class="rsvp-modal__scrim" data-rsvp-modal-scrim></div>
+      <div
+        class="rsvp-modal__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rsvp-modal-titulo"
+        aria-describedby="rsvp-modal-texto"
+        data-rsvp-modal-panel
+      >
+        <span class="ornament" aria-hidden="true">&#10038;</span>
+        <h2 class="rsvp-modal__title" id="rsvp-modal-titulo"></h2>
+        <div id="rsvp-modal-texto">
+          <p class="rsvp-modal__line">{{copy.rsvpSection.modalLine1}}</p>
+          <p class="rsvp-modal__line">{{copy.rsvpSection.modalLine2}}</p>
+        </div>
+        <button type="button" class="button" data-rsvp-modal-close>
+          {{copy.rsvpSection.modalClose}}
+        </button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

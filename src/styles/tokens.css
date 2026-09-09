@@ -1,0 +1,66 @@
+/**
+ * Tokens del sistema visual.
+ *
+ * La paleta sale de la fotografia aprobada: marfil, crema, arena, beige,
+ * rosa empolvado, taupe y marron suave. Nada saturado, ningun degradado que
+ * compita con la foto.
+ *
+ * Los colores de texto estan elegidos para superar el contraste AA de WCAG
+ * sobre sus fondos reales (>= 4.5:1 en texto normal), sin recurrir al negro,
+ * que rompería la calidez de la paleta.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* --- Superficies --- */
+  --ivory: #fbf7f2;
+  --cream: #f7f1e9;
+  --sand: #f0e6db;
+  --beige: #e6d9cc;
+
+  /* --- Tinta --- */
+  --taupe-deep: #55453b; /* titulos            13.0:1 sobre crema */
+  --taupe: #6e5a4e; /* texto corriente     5.8:1 sobre crema */
+  --taupe-soft: #756253; /* texto secundario    5.2:1 crema / 4.7:1 arena */
+
+  /* --- Acento --- */
+  --blush: #c9a092; /* solo ornamentos y filetes, nunca texto */
+  --blush-ink: #8e5b49; /* fondo de boton solido, 5.6:1 con texto marfil */
+
+  /* --- Filetes --- */
+  --line: rgb(110 90 78 / 0.18);
+  --line-strong: rgb(110 90 78 / 0.32);
+
+  /* --- Tipografia --- */
+  --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --tracking-eyebrow: 0.32em;
+  --tracking-button: 0.22em;
+
+  /* --- Ritmo --- */
+  --space-section: clamp(5.5rem, 12vw, 9rem);
+  --space-gutter: clamp(1.375rem, 5vw, 2.5rem);
+  --measure: 34rem;
+
+  /* --- Movimiento --- */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-reveal: 900ms;
+
+  /* --- Hero --- */
+  /* Alto de la banda fotografica y holgura oculta para el parallax. */
+  --photo-height: 78svh;
+  --photo-bleed: 20px;
+  /* La holgura superior se mantiene mas corta que el resto a proposito: el
+     pompon que remata el movil esta a un 1,3 % del borde de la fotografia, y
+     con 20 px se quedaba cortado. 10 px siguen cubriendo el recorrido maximo
+     del parallax (8 px) sin llegar a descubrir el borde. */
+  --photo-bleed-top: 10px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --photo-height: 100svh;
+  }
+}

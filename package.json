@@ -1,0 +1,18 @@
+{
+  "name": "olivia-massiel",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Baby Shower de Olivia Massiel — invitación digital",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  }
+}

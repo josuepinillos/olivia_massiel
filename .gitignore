@@ -1,0 +1,12 @@
+node_modules/
+
+# Secretos: nunca a Git
+.env
+.env.*
+!.env.example
+
+dist/
+.vite/
+*.local
+.DS_Store
+Thumbs.db

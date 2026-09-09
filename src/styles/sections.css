@@ -1,0 +1,241 @@
+/**
+ * Secciones interiores.
+ *
+ * Ritmo editorial: mucho aire, filetes finos en vez de tarjetas, y la
+ * fotografia aprobada reutilizada con distintos encuadres en lugar de servir
+ * imagenes nuevas.
+ */
+
+.section {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding-block: var(--space-section);
+  padding-inline: var(--space-gutter);
+  text-align: center;
+  overflow: hidden;
+}
+
+.section--cream {
+  background: var(--cream);
+}
+
+.section--sand {
+  background: var(--sand);
+}
+
+.section--tight {
+  padding-bottom: 0;
+}
+
+.section__inner {
+  width: min(100%, 42rem);
+}
+
+.section__inner--narrow {
+  width: min(100%, var(--measure));
+}
+
+/* --- Aparicion suave ----------------------------------------------------- */
+
+html.js [data-reveal] {
+  opacity: 0;
+  translate: 0 14px;
+  transition:
+    opacity var(--dur-reveal) var(--ease-soft),
+    translate var(--dur-reveal) var(--ease-soft);
+}
+
+html.js [data-reveal].is-revealed {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] {
+    opacity: 1;
+    translate: 0 0;
+    transition: none;
+  }
+}
+
+/* --- Invitacion: datos del evento ---------------------------------------- */
+
+.facts {
+  display: grid;
+  gap: 0;
+  width: min(100%, 26rem);
+  margin: clamp(2.25rem, 7vw, 3rem) auto clamp(2.25rem, 6vw, 2.75rem);
+  text-align: left;
+}
+
+.facts__row {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 1rem;
+  align-items: baseline;
+  padding-block: 1.0625rem;
+  border-top: 1px solid var(--line);
+}
+
+.facts__row:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.facts dt {
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--taupe-soft);
+}
+
+.facts dd {
+  font-size: 1rem;
+  color: var(--taupe-deep);
+}
+
+.facts__hint {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--taupe-soft);
+}
+
+/* --- La espera: encuadre del movil --------------------------------------- */
+
+.plate {
+  width: 100%;
+  margin-top: clamp(3rem, 9vw, 4.5rem);
+  overflow: hidden;
+}
+
+.plate img {
+  width: 100%;
+  height: clamp(15rem, 42svh, 24rem);
+  object-fit: cover;
+  /* El encuadre se hace con object-position: es el mismo archivo del hero,
+     ya en cache, en vez de una segunda descarga. */
+}
+
+/* --- Cuenta regresiva ---------------------------------------------------- */
+
+.countdown__decor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.countdown__decor img {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: clamp(1.75rem, 5vw, 2.75rem);
+  height: auto;
+  opacity: 0.7;
+  animation: decor-float 9s var(--ease-soft) infinite;
+  animation-delay: var(--d);
+}
+
+@keyframes decor-float {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: -1.5deg;
+  }
+  50% {
+    translate: 0 -10px;
+    rotate: 1.5deg;
+  }
+}
+
+.clock {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.25rem;
+  width: min(100%, 34rem);
+  margin: clamp(2rem, 6vw, 2.75rem) auto clamp(2rem, 6vw, 2.5rem);
+}
+
+.clock li {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.clock strong {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 9vw, 3.75rem);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--taupe-deep);
+}
+
+.clock span {
+  font-size: 0.5625rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--taupe-soft);
+}
+
+.countdown__note {
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-eyebrow);
+  line-height: 2.2;
+  text-transform: uppercase;
+  color: var(--taupe-soft);
+}
+
+/* --- Confirmacion -------------------------------------------------------- */
+
+#confirmar .display {
+  margin-bottom: clamp(2rem, 6vw, 2.5rem);
+}
+
+/* --- Cierre -------------------------------------------------------------- */
+
+.closing .display--name {
+  margin-block: 1.5rem 1.75rem;
+}
+
+.closing__meta {
+  margin-top: clamp(2.5rem, 7vw, 3.5rem);
+  font-size: 0.5625rem;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--taupe-soft);
+}
+
+/* 500 sobre el 300 del resto ya se lee como negrita, y evita descargar un peso
+   mas de la tipografia solo para una palabra. */
+.closing__meta strong {
+  font-weight: 500;
+  color: var(--taupe-deep);
+}
+
+.closing__credit {
+  color: var(--taupe-deep);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35em;
+  text-decoration-color: var(--line-strong);
+  transition:
+    color 280ms var(--ease-soft),
+    text-decoration-color 280ms var(--ease-soft);
+}
+
+.closing__credit:hover {
+  color: var(--blush-ink);
+  text-decoration-color: var(--blush-ink);
+}
+
+/* --- Escritorio ---------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .facts__row {
+    grid-template-columns: 8rem 1fr;
+  }
+
+  .plate img {
+    height: clamp(20rem, 52svh, 30rem);
+  }
+}

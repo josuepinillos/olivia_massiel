@@ -1,0 +1,66 @@
+{
+  "project": "Olivia Massiel Baby Shower",
+  "note": "Manifiesto unico. Reemplaza a assets/manifest.json y assets/production/manifest.json, que se contradecian entre si y apuntaban a rutas inexistentes. Las rutas de aqui son las reales servidas por Vite desde /public.",
+  "hero": {
+    "src": "images/hero.webp",
+    "width": 1024,
+    "height": 1536,
+    "source": "assets/production/hero-crochet.webp (WebP calidad 90 desde assets/reference/OLIVIA_MASSIEL_LETRAS_REFERENCIA.png)",
+    "role": "Fotografia aprobada con el nombre en letras de crochet. Fuente de verdad visual. No regenerar, recortar destructivamente ni sustituir.",
+    "note": "Sustituye a la version anterior con banderines de fieltro, conservada en assets/production/hero.webp. La escena es la misma (habitacion, cuna, movil, animales, luz, encuadre) pero esta regenerada, asi que todos los objetos se desplazaron y hubo que recalibrar las 18 zonas de src/data/hotspots.ts.",
+    "reused_by": [
+      "seccion La espera (encuadre superior: movil y animales)"
+    ]
+  },
+  "decor": [
+    {
+      "src": "images/pom-pom-left.webp",
+      "width": 65,
+      "height": 95
+    },
+    {
+      "src": "images/pom-pom-mid-left.webp",
+      "width": 65,
+      "height": 85
+    },
+    {
+      "src": "images/pom-pom-mid-right.webp",
+      "width": 70,
+      "height": 90
+    },
+    {
+      "src": "images/pom-pom-right.webp",
+      "width": 70,
+      "height": 100
+    },
+    {
+      "src": "images/star-left.webp",
+      "width": 65,
+      "height": 75
+    },
+    {
+      "src": "images/star-center.webp",
+      "width": 70,
+      "height": 85
+    },
+    {
+      "src": "images/star-right.webp",
+      "width": 70,
+      "height": 75
+    },
+    {
+      "src": "images/star-bottom.webp",
+      "width": 75,
+      "height": 80
+    }
+  ],
+  "excluded": {
+    "hero@2x.webp": "Mide 1024x1536, identico a hero.webp, pero mas comprimido (104 KB vs 153 KB). No es una version 2x: usarlo en srcset serviria peor imagen en pantallas de alta densidad.",
+    "hero-mobile.webp": "1013x1536 frente a 1024x1536. Recorte de 11 px, visualmente redundante. Servirlo duplicaria el hero sin beneficio.",
+    "mobile-ring.webp": "Es un movil tipo dosel/carpa safari. El de hero.webp es un aro plano rosa de dos niveles. Objetos distintos.",
+    "lion.webp / elephant.webp / zebra.webp / giraffe.webp": "Recortes de peluches de pie y de cuerpo entero. Los de hero.webp son colgantes y de frente. No coinciden en pose ni escala (120-135 px de ancho).",
+    "banner-olivia.webp / banner-massiel.webp": "El canal alfa conserva residuos del recorte (listones de la cuna y un bloque blanco). El nombre ya existe fisicamente en hero.webp.",
+    "hero.webp (version de fieltro)": "Version anterior del hero, con el nombre en banderines de fieltro. Sustituida por la fotografia de letras de crochet. Se conserva en assets/production/ como archivo."
+  },
+  "not_shipped": "assets/reference/*.png (4.3 MB) son guia visual interna y nunca deben llegar a produccion."
+}

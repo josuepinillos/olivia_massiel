@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#e9ddd1">
+  <meta name="description" content="Baby Shower de Olivia Massiel">
+  <title>Olivia Massiel · Baby Shower</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <span class="topbar-mark">♡</span>
+    <button class="menu" aria-label="Abrir menú"><i></i><i></i><i></i></button>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="hero-scene" id="heroScene">
+        <img class="hero-bg" src="assets/hero.webp" alt="Cuna y decoración del baby shower de Olivia Massiel">
+        <div class="vignette"></div>
+
+        <!-- Interactive depth layers -->
+        <div class="layer mobile-ring" data-depth="0.20">
+          <img src="assets/mobile-ring.webp" alt="" draggable="false">
+        </div>
+        <div class="layer toy lion" data-depth="0.70" data-toy="lion">
+          <img src="assets/lion.webp" alt="" draggable="false">
+        </div>
+        <div class="layer toy elephant" data-depth="0.62" data-toy="elephant">
+          <img src="assets/elephant.webp" alt="" draggable="false">
+        </div>
+        <div class="layer toy zebra" data-depth="0.55" data-toy="zebra">
+          <img src="assets/zebra.webp" alt="" draggable="false">
+        </div>
+        <div class="layer toy giraffe" data-depth="0.48" data-toy="giraffe">
+          <img src="assets/giraffe.webp" alt="" draggable="false">
+        </div>
+
+        <div class="hero-title" data-depth="0.10">
+          <span class="eyebrow">BABY SHOWER</span>
+          <button class="name-trigger" aria-label="Olivia Massiel">
+            <span>OLIVIA</span>
+            <span>MASSIEL</span>
+          </button>
+          <p>Estamos esperando<br>con mucho amor tu llegada.</p>
+        </div>
+
+        <a class="scroll-cue" href="#detalles">
+          <span>DESCUBRE MÁS</span><b>↓</b>
+        </a>
+      </div>
+    </section>
+
+    <section class="section details" id="detalles">
+      <div class="section-inner">
+        <span class="ornament">✦</span>
+        <p class="eyebrow">ESTÁS INVITADO</p>
+        <h2>Queremos celebrar<br>la llegada de <em>Olivia Massiel</em></h2>
+
+        <div class="event-list">
+          <article><span class="icon">▦</span><div><small>FECHA</small><p id="dateLabel"></p></div></article>
+          <article><span class="icon">◷</span><div><small>HORA</small><p id="timeLabel"></p></div></article>
+          <article><span class="icon">⌖</span><div><small>LUGAR</small><p id="venueLabel"></p><p id="addressLabel" class="muted"></p></div></article>
+        </div>
+
+        <a class="button" id="mapsButton" target="_blank" rel="noopener">VER UBICACIÓN</a>
+      </div>
+    </section>
+
+    <section class="section waiting">
+      <div class="section-inner narrow">
+        <span class="ornament">✦</span>
+        <p class="eyebrow">LA ESPERA</p>
+        <h2>Más bonita</h2>
+        <p>Hay momentos que esperamos durante toda una vida…</p>
+        <p>Y uno de ellos está por llegar.</p>
+        <strong>OLIVIA MASSIEL</strong>
+      </div>
+      <div class="image-strip"><img src="assets/hero.webp" alt="" loading="lazy"></div>
+    </section>
+
+    <section class="section countdown-section" id="cuenta">
+      <div class="section-inner">
+        <span class="ornament">✦</span>
+        <p class="eyebrow">FALTAN</p>
+        <div class="countdown">
+          <div><strong id="days">00</strong><small>DÍAS</small></div>
+          <div><strong id="hours">00</strong><small>HORAS</small></div>
+          <div><strong id="minutes">00</strong><small>MIN</small></div>
+          <div><strong id="seconds">00</strong><small>SEG</small></div>
+        </div>
+        <p class="countdown-note">PARA CELEBRAR<br>SU LLEGADA</p>
+      </div>
+    </section>
+
+    <section class="section location" id="lugar">
+      <div class="section-inner">
+        <span class="ornament">✦</span>
+        <p class="eyebrow">NOS VEMOS EN</p>
+        <h2 id="venueLabel2"></h2>
+        <p id="addressLabel2"></p>
+        <a class="button outline" id="routeButton" target="_blank" rel="noopener">VER RUTA</a>
+        <div class="map-card">
+          <div class="map-grid"></div><span>📍</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section rsvp">
+      <div class="section-inner narrow">
+        <span class="heart">♡</span>
+        <p class="eyebrow">¿NOS ACOMPAÑAS?</p>
+        <h2>Será muy especial compartir este momento contigo.</h2>
+        <a class="button filled" id="rsvpButton">CONFIRMAR ASISTENCIA</a>
+      </div>
+    </section>
+
+    <footer class="section footer">
+      <span class="ornament">♡</span>
+      <p class="eyebrow">CON AMOR,</p>
+      <h2>OLIVIA MASSIEL</h2>
+      <p>Te esperamos para celebrar<br>su llegada.</p>
+      <small>BABY SHOWER · <span id="footerDate"></span></small>
+    </footer>
+  </main>
+
+  <script src="event.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

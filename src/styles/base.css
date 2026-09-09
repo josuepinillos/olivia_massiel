@@ -1,0 +1,248 @@
+/* Reinicio minimo y elementos compartidos. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Compensa la barra superior fija al saltar a un ancla. */
+  scroll-padding-top: 4.5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--taupe);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.65;
+  /* Ninguna seccion debe provocar scroll lateral en ningun ancho. */
+  overflow-x: hidden;
+}
+
+/* Bloquea el scroll del documento mientras el menu esta abierto. */
+html.has-nav-open,
+html.has-nav-open body {
+  overflow: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+p,
+figure,
+dl,
+dd,
+ol,
+ul {
+  margin: 0;
+}
+
+ol,
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+/* --- Foco visible, dentro del sistema visual --------------------------- */
+
+:focus-visible {
+  outline: 2px solid var(--blush-ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% -150%;
+  z-index: 200;
+  padding: 0.75rem 1.5rem;
+  background: var(--ivory);
+  color: var(--taupe-deep);
+  font-size: 0.75rem;
+  letter-spacing: var(--tracking-button);
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 0 0 12px 12px;
+  transition: translate 220ms var(--ease-soft);
+}
+
+.skip-link:focus-visible {
+  translate: -50% 0;
+}
+
+/* Etiqueta visible solo para lectores de pantalla. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Tipografia compartida --------------------------------------------- */
+
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--taupe-soft);
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.375rem, 8.5vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: 0.005em;
+  color: var(--taupe-deep);
+  text-wrap: balance;
+}
+
+.display em {
+  display: block;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.display--lead {
+  font-size: clamp(2.125rem, 7vw, 3.25rem);
+}
+
+.display--name {
+  display: grid;
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: clamp(2.75rem, 11vw, 4.75rem);
+}
+
+.prose {
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 3.6vw, 1.3125rem);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.45;
+  color: var(--taupe);
+  max-width: 28ch;
+  margin-inline: auto;
+  text-wrap: pretty;
+}
+
+.prose--small {
+  font-size: 1rem;
+  font-style: normal;
+  font-family: var(--font-sans);
+}
+
+.prose + .prose {
+  margin-top: 0.75rem;
+}
+
+.signature {
+  margin-top: 2.25rem;
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--taupe-soft);
+}
+
+.ornament {
+  display: block;
+  color: var(--blush);
+  font-size: 0.875rem;
+  line-height: 1;
+  margin-bottom: 1.5rem;
+}
+
+.ornament--heart {
+  font-size: 1.5rem;
+}
+
+/* --- Botones ------------------------------------------------------------ */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 48 px: por encima del minimo recomendado para objetivos tactiles. */
+  min-height: 3rem;
+  padding-inline: 2rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--taupe-deep);
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: var(--tracking-button);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 320ms var(--ease-soft),
+    border-color 320ms var(--ease-soft),
+    color 320ms var(--ease-soft);
+}
+
+.button:hover {
+  border-color: var(--blush-ink);
+  color: var(--blush-ink);
+}
+
+.button--filled {
+  background: var(--blush-ink);
+  border-color: var(--blush-ink);
+  color: var(--ivory);
+}
+
+.button--filled:hover {
+  background: var(--taupe-deep);
+  border-color: var(--taupe-deep);
+  color: var(--ivory);
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.button:disabled:hover {
+  background: var(--blush-ink);
+  border-color: var(--blush-ink);
+  color: var(--ivory);
+}
+
+/* --- Preferencia de movimiento reducido -------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

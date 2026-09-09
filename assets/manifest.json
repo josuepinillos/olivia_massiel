@@ -1,0 +1,37 @@
+{
+  "project": "Olivia Massiel Baby Shower Landing",
+  "production_assets": {
+    "hero": "hero.webp",
+    "hero_2x": "hero@2x.webp",
+    "hero_mobile": "hero-mobile.webp",
+    "interactive_objects": [
+      "mobile-ring.webp",
+      "lion.webp",
+      "elephant.webp",
+      "zebra.webp",
+      "giraffe.webp"
+    ],
+    "decor": [
+      "pom-pom-left.webp",
+      "pom-pom-mid-left.webp",
+      "pom-pom-mid-right.webp",
+      "pom-pom-right.webp",
+      "star-left.webp",
+      "star-center.webp",
+      "star-right.webp",
+      "star-bottom.webp"
+    ],
+    "name_banners": [
+      "banner-olivia.webp",
+      "banner-massiel.webp"
+    ]
+  },
+  "reference_assets": {
+    "mobile_design": "reference/mobile-design-reference.png",
+    "latest_visual": "reference/latest-visual-reference.png"
+  },
+  "notes": [
+    "Reference images are for visual guidance only. Do not place them in production.",
+    "hero.webp is the latest approved key visual. Preserve it visually."
+  ]
+}
