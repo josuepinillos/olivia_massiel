@@ -108,7 +108,13 @@
   rotate: -45deg;
 }
 
-/* --- Velo y panel -------------------------------------------------------- */
+/* --- Velo y panel --------------------------------------------------------
+ *
+ * Ambos son hermanos de la barra, no hijos suyos, y su estado abierto se lee
+ * de la clase que el componente pone en <html>. Anidarlos dentro de la barra
+ * los dejaba a merced de su backdrop-filter, que crea bloque contenedor para
+ * los descendientes fijos y encogia el panel a la altura de la barra.
+ */
 
 .nav-scrim {
   position: fixed;
@@ -120,7 +126,7 @@
   transition: opacity 420ms var(--ease-soft);
 }
 
-[data-nav][data-open="true"] .nav-scrim {
+.has-nav-open .nav-scrim {
   opacity: 1;
   pointer-events: auto;
 }
@@ -140,7 +146,7 @@
   transition: translate 520ms var(--ease-soft);
 }
 
-[data-nav][data-open="true"] .nav-panel {
+.has-nav-open .nav-panel {
   translate: 0 0;
 }
 

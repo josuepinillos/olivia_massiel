@@ -71,22 +71,26 @@
           <span aria-hidden="true"></span>
         </button>
       </div>
-
-      <div class="nav-scrim" data-nav-scrim aria-hidden="true"></div>
-
-      <nav
-        id="nav-panel"
-        class="nav-panel"
-        data-nav-panel
-        aria-label="{{copy.nav.label}}"
-      >
-        <ul class="nav-panel__list" data-nav-list></ul>
-        <p class="nav-panel__sign">
-          <span>{{event.babyName}}</span>
-          <em>Una dulce espera…</em>
-        </p>
-      </nav>
     </header>
+
+    <!-- El velo y el panel viven fuera del <header> a proposito.
+         La barra usa backdrop-filter al bajar, y eso la convierte en bloque
+         contenedor de sus descendientes position:fixed: dentro de ella, el
+         panel se encogia a la altura de la barra en vez de cubrir la pantalla. -->
+    <div class="nav-scrim" data-nav-scrim aria-hidden="true"></div>
+
+    <nav
+      id="nav-panel"
+      class="nav-panel"
+      data-nav-panel
+      aria-label="{{copy.nav.label}}"
+    >
+      <ul class="nav-panel__list" data-nav-list></ul>
+      <p class="nav-panel__sign">
+        <span>{{event.babyName}}</span>
+        <em>Una dulce espera…</em>
+      </p>
+    </nav>
 
     <main>
       <!-- ==================== HERO ==================== -->
