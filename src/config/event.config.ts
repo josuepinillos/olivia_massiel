@@ -160,7 +160,7 @@ export const navItems: readonly NavItem[] = [
   { id: "inicio", label: "Inicio" },
   { id: "invitacion", label: "La invitación" },
   { id: "espera", label: "La espera" },
-  { id: "tu-nombre", label: "Tu nombre" },
   { id: "cuenta", label: "Cuenta regresiva" },
   { id: "confirmar", label: "Confirmar asistencia" },
+  { id: "tu-nombre", label: "Tu nombre" },
 ] as const;
