@@ -1,3 +1,4 @@
+import type { ServerResponse } from "node:http";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import { event, copy } from "./src/config/event.config.js";
 
@@ -62,7 +63,9 @@ function escapeHtml(value: string): string {
  * obligaria a simular la respuesta, que es justo lo que no queremos: aqui se
  * ejecuta la misma funcion, con las mismas validaciones, leyendo el mismo `.env`.
  *
- * Solo se aplica en desarrollo (`apply: "serve"`), asi que no toca el build.
+ * Se le anaden a la respuesta los ayudantes `status()` y `json()` que Vercel
+ * pone en su runtime, para que el handler vea exactamente la misma forma en
+ * local y en produccion. Solo se aplica en desarrollo (`apply: "serve"`).
  */
 function apiRsvpEnDesarrollo(entorno: Record<string, string>): Plugin {
   return {
@@ -78,34 +81,39 @@ function apiRsvpEnDesarrollo(entorno: Record<string, string>): Plugin {
         void (async () => {
           try {
             const modulo = (await server.ssrLoadModule("/api/rsvp.ts")) as {
-              manejaRsvp: (peticion: Request) => Promise<Response>;
+              default: (peticion: unknown, respuesta: unknown) => Promise<void>;
             };
 
-            const trozos: Buffer[] = [];
-            for await (const trozo of req) trozos.push(trozo as Buffer);
-            const cuerpo = Buffer.concat(trozos);
+            const respuesta = res as ServerResponse & {
+              status?: (codigo: number) => unknown;
+              json?: (cuerpo: unknown) => void;
+            };
+            respuesta.status = (codigo: number) => {
+              res.statusCode = codigo;
+              return respuesta;
+            };
+            respuesta.json = (cuerpo: unknown) => {
+              res.setHeader("content-type", "application/json; charset=utf-8");
+              res.end(JSON.stringify(cuerpo));
+            };
 
-            const cabeceras = new Headers();
-            for (const [clave, valor] of Object.entries(req.headers)) {
-              if (typeof valor === "string") cabeceras.set(clave, valor);
-              else if (Array.isArray(valor)) cabeceras.set(clave, valor.join(", "));
+            await modulo.default(req, respuesta);
+
+            // Si el handler terminara sin responder, la peticion se quedaria
+            // colgada. Aqui se cierra para que el fallo se vea al instante.
+            if (!res.headersSent) {
+              server.config.logger.error("[api/rsvp] el handler no respondio");
+              res.statusCode = 500;
+              res.setHeader("content-type", "application/json; charset=utf-8");
+              res.end(JSON.stringify({ success: false, error: "SERVER_ERROR" }));
             }
-
-            const peticion = new Request("http://localhost/api/rsvp", {
-              method: req.method ?? "GET",
-              headers: cabeceras,
-              ...(cuerpo.length > 0 ? { body: cuerpo } : {}),
-            });
-
-            const respuesta = await modulo.manejaRsvp(peticion);
-            res.statusCode = respuesta.status;
-            respuesta.headers.forEach((valor, clave) => res.setHeader(clave, valor));
-            res.end(await respuesta.text());
           } catch (e) {
             server.config.logger.error(`[api/rsvp] ${String(e)}`);
-            res.statusCode = 500;
-            res.setHeader("content-type", "application/json; charset=utf-8");
-            res.end(JSON.stringify({ success: false, error: "SERVER_ERROR" }));
+            if (!res.headersSent) {
+              res.statusCode = 500;
+              res.setHeader("content-type", "application/json; charset=utf-8");
+              res.end(JSON.stringify({ success: false, error: "SERVER_ERROR" }));
+            }
           }
         })();
       });

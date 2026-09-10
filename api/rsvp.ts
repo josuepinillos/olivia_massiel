@@ -9,8 +9,15 @@
  *
  * Se usa la API REST de Resend con `fetch` en vez del SDK, para no añadir una
  * dependencia al proyecto por una sola llamada HTTP.
+ *
+ * Firma Node de Vercel: `(req, res)`. La respuesta se ESCRIBE en `res`; lo que
+ * devuelva la funcion se ignora. Una version anterior devolvia un `Response` al
+ * estilo web y Vercel nunca lo miraba, asi que la peticion se quedaba abierta
+ * hasta agotar los 300 s de la funcion. Ahora todas las ramas terminan llamando
+ * a `responde`.
  */
 
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { event } from "../src/config/event.config.js";
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
@@ -25,7 +32,26 @@ const MIN_MS_EN_FORMULARIO = 1500;
 const VENTANA_MS = 10 * 60 * 1000;
 const MAX_POR_VENTANA = 5;
 
+/**
+ * Corte para la llamada a Resend.
+ *
+ * Sin el, un proveedor que no contesta mantiene viva la funcion hasta el limite
+ * de la plataforma. Con el, el invitado ve el mensaje de reintento en segundos.
+ */
+const RESEND_TIMEOUT_MS = 10_000;
+
 type Fallo = "INVALID_NAME" | "TOO_FAST" | "RATE_LIMITED" | "SERVER_ERROR";
+
+/** Lo que Vercel entrega en el runtime de Node, con el cuerpo ya parseado. */
+export interface PeticionVercel extends IncomingMessage {
+  body?: unknown;
+}
+
+/** `status()` y `json()` son los ayudantes que Vercel anade a la respuesta. */
+export interface RespuestaVercel extends ServerResponse {
+  status(codigo: number): RespuestaVercel;
+  json(cuerpo: unknown): void;
+}
 
 interface Cuerpo {
   nombre?: unknown;
@@ -34,6 +60,10 @@ interface Cuerpo {
   /** Marca de tiempo de cuando se pintó el formulario. */
   abierto?: unknown;
 }
+
+/* -------------------------------------------------------------------------- */
+/* Validación                                                                  */
+/* -------------------------------------------------------------------------- */
 
 /**
  * Deja el nombre en su forma canónica: sin espacios sobrantes ni dobles, y
@@ -86,16 +116,50 @@ function demasiadasVeces(ip: string): boolean {
 /* Respuestas                                                                  */
 /* -------------------------------------------------------------------------- */
 
-function json(cuerpo: unknown, status: number): Response {
-  return new Response(JSON.stringify(cuerpo), {
-    status,
-    headers: { "content-type": "application/json; charset=utf-8" },
-  });
+/**
+ * Unica salida del endpoint. Todas las ramas pasan por aqui, y se comprueba
+ * `headersSent` para que un segundo intento de responder no reviente la funcion
+ * despues de haber contestado ya.
+ */
+function responde(res: RespuestaVercel, codigo: number, cuerpo: unknown): void {
+  if (res.headersSent) return;
+  res.status(codigo).json(cuerpo);
 }
 
-const ok = () => json({ success: true }, 200);
-const error = (codigo: Fallo, status: number) =>
-  json({ success: false, error: codigo }, status);
+const ok = (res: RespuestaVercel) => responde(res, 200, { success: true });
+const fallo = (res: RespuestaVercel, codigo: Fallo, estado: number) =>
+  responde(res, estado, { success: false, error: codigo });
+
+/* -------------------------------------------------------------------------- */
+/* Cuerpo de la petición                                                       */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Vercel suele entregar `req.body` ya parseado, pero no siempre: depende de la
+ * cabecera y del runtime. Si no viene, se lee del flujo. Un cuerpo ilegible se
+ * trata como vacio y la validacion posterior lo rechaza.
+ */
+async function leeCuerpo(req: PeticionVercel): Promise<Cuerpo> {
+  if (req.body && typeof req.body === "object") return req.body as Cuerpo;
+
+  if (typeof req.body === "string") {
+    try {
+      return JSON.parse(req.body) as Cuerpo;
+    } catch {
+      return {};
+    }
+  }
+
+  const trozos: Buffer[] = [];
+  for await (const trozo of req) trozos.push(trozo as Buffer);
+  if (trozos.length === 0) return {};
+
+  try {
+    return JSON.parse(Buffer.concat(trozos).toString("utf8")) as Cuerpo;
+  } catch {
+    return {};
+  }
+}
 
 /* -------------------------------------------------------------------------- */
 /* Correo                                                                      */
@@ -144,6 +208,7 @@ async function enviaCorreo(nombre: string): Promise<void> {
       subject: `Nueva confirmación de asistencia — ${event.babyName}`,
       text: cuerpoDelCorreo(nombre),
     }),
+    signal: AbortSignal.timeout(RESEND_TIMEOUT_MS),
   });
 
   if (!respuesta.ok) {
@@ -156,50 +221,69 @@ async function enviaCorreo(nombre: string): Promise<void> {
 /* Manejador                                                                   */
 /* -------------------------------------------------------------------------- */
 
-export async function manejaRsvp(request: Request): Promise<Response> {
-  if (request.method !== "POST") {
-    return json({ success: false, error: "SERVER_ERROR" }, 405);
-  }
-
-  let cuerpo: Cuerpo;
+export default async function handler(
+  req: PeticionVercel,
+  res: RespuestaVercel,
+): Promise<void> {
+  // Red de seguridad: pase lo que pase ahi dentro, el cliente recibe respuesta.
+  // Es lo que evita que la peticion se quede abierta hasta el timeout.
   try {
-    cuerpo = (await request.json()) as Cuerpo;
-  } catch {
-    return error("INVALID_NAME", 400);
-  }
+    if (req.method !== "POST") {
+      fallo(res, "SERVER_ERROR", 405);
+      return;
+    }
 
-  // Honeypot: si viene relleno es un bot. Se responde con éxito para no
-  // enseñarle qué le delató, pero no se manda ningún correo.
-  if (typeof cuerpo.website === "string" && cuerpo.website.trim() !== "") {
-    return ok();
-  }
+    const cuerpo = await leeCuerpo(req);
 
-  // Nadie escribe su nombre completo en menos de segundo y medio.
-  const abierto = Number(cuerpo.abierto);
-  if (Number.isFinite(abierto) && Date.now() - abierto < MIN_MS_EN_FORMULARIO) {
-    return error("TOO_FAST", 429);
-  }
+    // Honeypot: si viene relleno es un bot. Se responde con éxito para no
+    // enseñarle qué le delató, pero no se manda ningún correo.
+    if (typeof cuerpo.website === "string" && cuerpo.website.trim() !== "") {
+      ok(res);
+      return;
+    }
 
-  if (typeof cuerpo.nombre !== "string") return error("INVALID_NAME", 400);
-  const nombre = normalizaNombre(cuerpo.nombre);
-  if (!nombreValido(nombre)) return error("INVALID_NAME", 400);
+    // Nadie escribe su nombre completo en menos de segundo y medio.
+    const abierto = Number(cuerpo.abierto);
+    if (Number.isFinite(abierto) && Date.now() - abierto < MIN_MS_EN_FORMULARIO) {
+      fallo(res, "TOO_FAST", 429);
+      return;
+    }
 
-  const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-real-ip") ||
-    "desconocida";
-  if (demasiadasVeces(ip)) return error("RATE_LIMITED", 429);
+    if (typeof cuerpo.nombre !== "string") {
+      fallo(res, "INVALID_NAME", 400);
+      return;
+    }
+    const nombre = normalizaNombre(cuerpo.nombre);
+    if (!nombreValido(nombre)) {
+      fallo(res, "INVALID_NAME", 400);
+      return;
+    }
 
-  try {
-    await enviaCorreo(nombre);
+    const reenviada = req.headers["x-forwarded-for"];
+    const ip =
+      (Array.isArray(reenviada) ? reenviada[0] : reenviada)
+        ?.split(",")[0]
+        ?.trim() ||
+      (req.headers["x-real-ip"] as string | undefined) ||
+      "desconocida";
+    if (demasiadasVeces(ip)) {
+      fallo(res, "RATE_LIMITED", 429);
+      return;
+    }
+
+    try {
+      await enviaCorreo(nombre);
+    } catch (e) {
+      // El motivo se queda en los registros del servidor; al invitado solo le
+      // llega que no se pudo, para no filtrar nada del entorno.
+      console.error("[rsvp] fallo al enviar el correo:", e);
+      fallo(res, "SERVER_ERROR", 500);
+      return;
+    }
+
+    ok(res);
   } catch (e) {
-    // El motivo se queda en los registros del servidor; al invitado solo le
-    // llega que no se pudo, para no filtrar nada del entorno.
-    console.error("[rsvp] fallo al enviar el correo:", e);
-    return error("SERVER_ERROR", 500);
+    console.error("[rsvp] error inesperado:", e);
+    fallo(res, "SERVER_ERROR", 500);
   }
-
-  return ok();
 }
-
-export default manejaRsvp;
