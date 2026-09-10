@@ -64,3 +64,21 @@
     --photo-height: 100svh;
   }
 }
+
+/*
+ * El aire entre secciones tambien depende del alto disponible.
+ *
+ * `--space-section` solo miraba el ancho, asi que en un movil se quedaba
+ * clavado en su suelo de 5,5rem: 176 px de relleno vertical dentro de una
+ * pantalla util de 650-700 px. Eso empujaba el ultimo boton de cada seccion
+ * fuera del viewport al llegar por un enlace interno.
+ *
+ * Aqui el mismo ritmo se mide contra el alto. Solo afecta al layout movil
+ * (por debajo de 1024 px) y a pantallas bajas, asi que en escritorio el
+ * espaciado no cambia ni un pixel.
+ */
+@media (max-width: 1023px) and (max-height: 780px) {
+  :root {
+    --space-section: clamp(2.25rem, 7.5svh, 5.5rem);
+  }
+}

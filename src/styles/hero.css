@@ -18,9 +18,18 @@
 
 .hero {
   position: relative;
-  min-height: 100svh;
+  /* Altura exacta, no minima.
+   *
+   * Con `min-height` y una fila de foto fija, la fila del texto crecia hasta
+   * lo que pedia su contenido y el hero acababa midiendo mas de una pantalla:
+   * en un iPhone con las barras de Safari a la vista, "DESCUBRE MAS" quedaba
+   * por debajo del borde inferior. */
+  height: 100svh;
   display: grid;
-  grid-template-rows: var(--photo-height) 1fr;
+  /* El texto toma lo que necesita; la foto se queda con el resto, hasta un
+   * maximo de `--photo-height`. Asi el conjunto nunca desborda la pantalla y
+   * en pantallas altas la composicion es la de siempre. */
+  grid-template-rows: minmax(0, var(--photo-height)) auto;
   background: var(--cream);
 }
 
@@ -30,6 +39,11 @@
   position: relative;
   overflow: hidden;
   background: var(--beige);
+  /* Contenedor de consulta: permite que el escenario calcule su cobertura
+   * contra el tamano REAL del marco en vez de contra una variable global.
+   * Como la fila de la foto ahora es flexible, esa variable ya no describe
+   * su altura y el calculo habria dejado un borde al descubierto. */
+  container-type: size;
 }
 
 .hero__stage {
@@ -39,8 +53,8 @@
   transform: translateX(-50%);
   aspect-ratio: 1024 / 1536;
   width: max(
-    calc(100% + 2 * var(--photo-bleed)),
-    calc((var(--photo-height) + 2 * var(--photo-bleed)) * 1024 / 1536)
+    calc(100cqw + 2 * var(--photo-bleed)),
+    calc((100cqh + 2 * var(--photo-bleed)) * 1024 / 1536)
   );
   /* `translate` queda libre para el parallax, sin pisar el `transform`
      que centra el escenario. */
