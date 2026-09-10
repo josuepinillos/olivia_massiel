@@ -258,14 +258,20 @@ html.js [data-reveal].is-revealed {
     gap: 0;
     /* Caja completa: con menos ancho la fecha se partia en dos. */
     width: 100%;
-    align-items: start;
   }
 
   .facts__row + .facts__row {
     border-inline-start: 1px solid var(--line);
   }
 
+  /*
+   * Las columnas se estiran a la mas alta para que los dos filetes midan lo
+   * mismo. El contenido no se reparte con ellas: se queda arriba, alineado
+   * rotulo con rotulo. Sin esto, la columna de la hora —mas corta que las
+   * otras— dejaba un filete visiblemente mas corto que su vecino.
+   */
   .facts__row {
+    align-content: start;
     padding-inline: clamp(0.625rem, 2vw, 1.125rem);
   }
 

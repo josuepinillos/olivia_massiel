@@ -144,7 +144,9 @@
               <dt>{{copy.invitation.timeTag}}</dt>
               <dd>
                 {{event.timeLabel}}
-                <span class="facts__hint">{{event.timeZoneLabel}}</span>
+                <!-- La zona horaria no se pinta: el dato tecnico rompia el tono de
+                     la invitacion. Sigue en el arbol para los lectores de pantalla. -->
+                <span class="visually-hidden">{{event.timeZoneLabel}}</span>
               </dd>
             </div>
             <div class="facts__row">
