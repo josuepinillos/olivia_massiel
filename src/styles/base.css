@@ -76,7 +76,7 @@ ul {
   letter-spacing: var(--tracking-button);
   text-transform: uppercase;
   text-decoration: none;
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 var(--radius-surface) var(--radius-surface);
   transition: translate 220ms var(--ease-soft);
 }
 
@@ -135,6 +135,21 @@ ul {
   font-size: clamp(2.75rem, 11vw, 4.75rem);
 }
 
+/*
+ * Ritmo entre bloques.
+ *
+ * El eyebrow y el titular se tocaban (ambos sin margen), y la prosa quedaba
+ * pegada al titular. Selectores de hermano adyacente para no repartir
+ * margenes sueltos por cada seccion.
+ */
+.eyebrow + .display {
+  margin-top: 0.9375rem;
+}
+
+.display + .prose {
+  margin-top: clamp(1.125rem, 3.5vw, 1.5rem);
+}
+
 .prose {
   font-family: var(--font-display);
   font-size: clamp(1.125rem, 3.6vw, 1.3125rem);
@@ -179,39 +194,56 @@ ul {
 
 /* --- Botones ------------------------------------------------------------ */
 
+/*
+ * Boton.
+ *
+ * Casi a escuadra en vez de pildora, con el aire lateral de una tarjeta
+ * grabada y el tracking mas abierto. El relleno solido lleva un filete
+ * interior claro que le da canto, en vez de una sombra.
+ */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   /* 48 px: por encima del minimo recomendado para objetivos tactiles. */
   min-height: 3rem;
-  padding-inline: 2rem;
+  padding-inline: clamp(2.25rem, 7vw, 2.75rem);
   border: 1px solid var(--line-strong);
-  border-radius: 999px;
+  border-radius: var(--radius-control);
   background: transparent;
   color: var(--taupe-deep);
   font-family: var(--font-sans);
   font-size: 0.6875rem;
   font-weight: 400;
-  letter-spacing: var(--tracking-button);
+  letter-spacing: 0.26em;
+  /* La ultima letra no arrastra su espaciado contra el borde derecho. */
+  text-indent: 0.26em;
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
   transition:
     background-color 320ms var(--ease-soft),
     border-color 320ms var(--ease-soft),
-    color 320ms var(--ease-soft);
+    color 320ms var(--ease-soft),
+    translate 320ms var(--ease-soft);
 }
 
 .button:hover {
   border-color: var(--blush-ink);
   color: var(--blush-ink);
+  /* Empujon minimo: acusa el gesto sin convertirse en efecto. */
+  translate: 0 -1px;
+}
+
+.button:active {
+  translate: 0 0;
 }
 
 .button--filled {
   background: var(--blush-ink);
   border-color: var(--blush-ink);
   color: var(--ivory);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16);
 }
 
 .button--filled:hover {

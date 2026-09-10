@@ -28,6 +28,16 @@
   --blush: #c9a092; /* solo ornamentos y filetes, nunca texto */
   --blush-ink: #8e5b49; /* fondo de boton solido, 5.6:1 con texto marfil */
 
+  /*
+   * Radios.
+   *
+   * Una sola escala para toda la pagina. Convivian 2, 8, 10, 12, 16 y 999 px
+   * sin sistema, y la pildora de 999 px era lo que mas hacia parecer la
+   * invitacion una aplicacion. Casi a escuadra se lee como impreso.
+   */
+  --radius-control: 2px; /* botones y campos */
+  --radius-surface: 6px; /* superficies flotantes */
+
   /* --- Filetes --- */
   --line: rgb(110 90 78 / 0.18);
   --line-strong: rgb(110 90 78 / 0.32);

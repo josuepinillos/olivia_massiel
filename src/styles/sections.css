@@ -61,43 +61,65 @@ html.js [data-reveal].is-revealed {
 
 /* --- Invitacion: datos del evento ---------------------------------------- */
 
+/*
+ * Composicion, no tabla.
+ *
+ * Antes eran tres filas con filete superior en cada una y filete de cierre
+ * abajo: la firma exacta de una hoja de especificaciones, y lo que hacia que
+ * esta parte se leyera como interfaz. Ahora manda la tipografia: la etiqueta
+ * es un rotulo diminuto y el dato es el protagonista, en la serif del resto
+ * de titulares.
+ *
+ * En movil, pila centrada. Desde 768 px, tres columnas como el reverso de una
+ * tarjeta grabada, separadas por filetes verticales que si organizan contenido
+ * real: no son adorno.
+ */
 .facts {
   display: grid;
-  gap: 0;
+  /*
+   * El aire se mide contra el alto, no contra el ancho.
+   *
+   * Con `vw` el ritmo se quedaba clavado en su suelo en cualquier movil y el
+   * boton se salia por abajo en pantallas de 667 px. Con `svh` el bloque se
+   * comprime en pantallas cortas y respira en las largas, que es como deberia
+   * comportarse el espacio de una invitacion.
+   */
+  gap: clamp(1.25rem, 3.2svh, 1.875rem);
   width: min(100%, 26rem);
-  margin: clamp(2.25rem, 7vw, 3rem) auto clamp(2.25rem, 6vw, 2.75rem);
-  text-align: left;
+  margin: clamp(1.75rem, 4.5svh, 2.75rem) auto clamp(2rem, 5svh, 3.25rem);
+  text-align: center;
 }
 
 .facts__row {
   display: grid;
-  grid-template-columns: 6.5rem 1fr;
-  gap: 1rem;
-  align-items: baseline;
-  padding-block: 1.0625rem;
-  border-top: 1px solid var(--line);
-}
-
-.facts__row:last-child {
-  border-bottom: 1px solid var(--line);
+  gap: 0.4375rem;
 }
 
 .facts dt {
+  /* 10 px: por debajo, un rotulo en versalitas con este tracking deja de
+     leerse comodo en movil, y el ahorro de un pixel no compensa. */
   font-size: 0.625rem;
-  letter-spacing: var(--tracking-eyebrow);
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
   text-transform: uppercase;
   color: var(--taupe-soft);
 }
 
 .facts dd {
-  font-size: 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.3125rem, 5.2vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.15;
   color: var(--taupe-deep);
+  text-wrap: balance;
 }
 
 .facts__hint {
   display: block;
-  margin-top: 0.25rem;
-  font-size: 0.8125rem;
+  margin-top: 0.3125rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.4;
   color: var(--taupe-soft);
 }
 
@@ -230,11 +252,30 @@ html.js [data-reveal].is-revealed {
 
 /* --- Escritorio ---------------------------------------------------------- */
 
-@media (min-width: 1024px) {
-  .facts__row {
-    grid-template-columns: 8rem 1fr;
+@media (min-width: 768px) {
+  .facts {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    /* Caja completa: con menos ancho la fecha se partia en dos. */
+    width: 100%;
+    align-items: start;
   }
 
+  .facts__row + .facts__row {
+    border-inline-start: 1px solid var(--line);
+  }
+
+  .facts__row {
+    padding-inline: clamp(0.625rem, 2vw, 1.125rem);
+  }
+
+  /* Un punto por debajo: el titular manda, el dato acompana. */
+  .facts dd {
+    font-size: 1.375rem;
+  }
+}
+
+@media (min-width: 1024px) {
   .plate img {
     height: clamp(20rem, 52svh, 30rem);
   }
