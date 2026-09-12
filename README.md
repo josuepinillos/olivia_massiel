@@ -225,4 +225,4 @@ Se conserva sin tocar como referencia:
 
 ## Evento
 
-19 de setiembre de 2026 · 7:30 p. m. · Salón Los Olivos · Av. Los Olivos 123, Chiclayo
+19 de setiembre de 2026 · 7:30 p. m. · Salón Los Olivos · Calle Francisco Cuneo Nro. 814, Chiclayo

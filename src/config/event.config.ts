@@ -45,9 +45,9 @@ export const event = {
   timeZoneLabel: "Hora de Perú (UTC-05:00)",
 
   venue: "Salón Los Olivos",
-  address: "Av. Los Olivos 123, Chiclayo",
+  address: "Calle Francisco Cuneo Nro. 814, Chiclayo",
   mapsUrl:
-    "https://www.google.com/maps/search/?api=1&query=Sal%C3%B3n%20Los%20Olivos%2C%20Chiclayo",
+    "https://www.google.com/maps/@-6.769298,-79.8526639,29a,75y,3.24h,89.56t/data=!3m7!1e1!3m5!1suxFuu3b0thsoA3KNEoX8hg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D0.4405075034726451%26panoid%3DuxFuu3b0thsoA3KNEoX8hg%26yaw%3D3.2443202094642847!7i16384!8i8192?entry=ttu&g_ep=EgoyMDI2MDkwOS4wIKXMDSoASAFQAw%3D%3D",
 
   rsvp,
 } as const;
