@@ -114,15 +114,6 @@ html.js [data-reveal].is-revealed {
   text-wrap: balance;
 }
 
-.facts__hint {
-  display: block;
-  margin-top: 0.3125rem;
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  line-height: 1.4;
-  color: var(--taupe-soft);
-}
-
 /* --- La espera: encuadre del movil --------------------------------------- */
 
 .plate {
@@ -256,8 +247,16 @@ html.js [data-reveal].is-revealed {
   .facts {
     grid-template-columns: repeat(3, 1fr);
     gap: 0;
-    /* Caja completa: con menos ancho la fecha se partia en dos. */
-    width: 100%;
+    /*
+     * Un poco mas ancha que el titular, centrada sobre el. Con el ancho del
+     * texto, «Calle Francisco Cuneo» no cabia en su columna y la direccion se
+     * partia en tres lineas, separando la calle y el numero. Con esto la
+     * direccion queda en dos lineas y la fecha en una. Nunca pasa del
+     * viewport menos los margenes laterales.
+     */
+    --facts-width: min(47rem, 100vw - 2 * var(--space-gutter));
+    width: var(--facts-width);
+    margin-inline: calc((100% - var(--facts-width)) / 2);
   }
 
   .facts__row + .facts__row {

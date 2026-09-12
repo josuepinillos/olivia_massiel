@@ -109,7 +109,7 @@ están escritas en la función.
 Si alguien confirma dos veces, llegan dos correos. Es lo acordado para esta
 primera versión.
 
-## Los assets## Los assets
+## Los assets
 
 Los que se sirven están en `public/images/`, descritos en
 [public/images/manifest.json](public/images/manifest.json), que es ahora el
@@ -163,7 +163,7 @@ en el objeto tocado y no en un movimiento general de la escena.
 
 ## Tu nombre tiene una melodía
 
-Sección `#tu-nombre`, entre «La espera» y la cuenta regresiva. El visitante
+Sección `#tu-nombre`, al final del recorrido, justo después de la confirmación de asistencia. El visitante
 escribe su nombre y cada letra aparece como una pieza de crochet independiente:
 su propio `<button>`, su propia zona sensible, su propio estado y su propia nota.
 El contenedor solo coloca las piezas; nunca escucha eventos.
@@ -225,4 +225,4 @@ Se conserva sin tocar como referencia:
 
 ## Evento
 
-19 de setiembre de 2026 · 7:30 p. m. · Salón Los Olivos · Calle Francisco Cuneo Nro. 814, Chiclayo
+19 de setiembre de 2026 · 7:30 p. m. · Calle Francisco Cuneo Nro. 814, Chiclayo
