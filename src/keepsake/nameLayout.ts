@@ -177,9 +177,8 @@ function placeLine(
  *    permite letras mas grandes. Una palabra suelta nunca se parte.
  * 3. La escala es una sola para todo el nombre: las proporciones de cada letra
  *    no se tocan.
- * 4. Cada linea se centra en horizontal. El bloque se apoya en el borde
- *    inferior de la caja, como el nombre de la plantilla aprobada, que descansa
- *    justo encima de «By Olivia Massiel».
+ * 4. Cada linea se centra en horizontal, y el bloque completo se centra en
+ *    vertical dentro de la caja.
  */
 export function layoutName(words: readonly Word[], box: Box): NameLayout {
   if (words.length === 0) return { scale: 0, lines: [], glyphs: [] };
@@ -198,10 +197,13 @@ export function layoutName(words: readonly Word[], box: Box): NameLayout {
     }
   }
 
-  // De abajo arriba: la ultima linea apoya su descendente en el borde de la caja.
+  // De abajo arriba, con el bloque centrado en vertical dentro de la caja.
   const glyphs: PlacedGlyph[] = [];
   const centerX = box.x + box.width / 2;
-  let bottom = box.y + box.height;
+  const blockHeight =
+    lines.reduce((sum, line) => sum + (line.ascent + line.descent) * scale, 0) +
+    LINE_GAP * (lines.length - 1);
+  let bottom = box.y + (box.height + blockHeight) / 2;
 
   for (let l = lines.length - 1; l >= 0; l -= 1) {
     const line = lines[l]!;
@@ -215,22 +217,4 @@ export function layoutName(words: readonly Word[], box: Box): NameLayout {
     lines: lines.map((line) => line.words.map((word) => word.text).join(" ")),
     glyphs,
   };
-}
-
-/**
- * Una sola linea a escala fija, centrada en `centerX` y colgada de `top`: el
- * punto mas alto de sus letras queda en esa altura. Para textos fijos del
- * recuerdo, como la firma «Olivia Massiel», cuya escala decide quien la llama.
- */
-export function layoutLine(
-  words: readonly Word[],
-  centerX: number,
-  top: number,
-  scale: number,
-): NameLayout {
-  if (words.length === 0) return { scale, lines: [], glyphs: [] };
-  const line = measureLine(words);
-  const glyphs: PlacedGlyph[] = [];
-  placeLine(line, centerX, top + line.ascent * scale, scale, glyphs);
-  return { scale, lines: [words.map((word) => word.text).join(" ")], glyphs };
 }

@@ -274,8 +274,7 @@
  * Guardar el recuerdo: el mismo botón de contorno que «Escuchar mi melodía»,
  * justo debajo y siempre en su propia línea, para que se lean como pareja.
  */
-.name-melody__save,
-.name-melody__share {
+.name-melody__save {
   display: flex;
   width: fit-content;
   margin: 0.875rem auto 0;

@@ -9,15 +9,12 @@
 import { copy } from "../config/event.config";
 import { composeKeepsake } from "./composeKeepsake";
 import { keepsakeFileName, startDownload } from "./downloadBlob";
-import { shareableFile, shareFile } from "./shareFile";
 
 export interface KeepsakeElements {
   readonly button: HTMLButtonElement;
   readonly status: HTMLElement;
   readonly statusText: HTMLElement;
   readonly again: HTMLAnchorElement;
-  /** «Compartir mi recuerdo». Opcional: sin el, solo hay descarga. */
-  readonly share: HTMLButtonElement | null;
 }
 
 export interface KeepsakeControl {
@@ -26,24 +23,20 @@ export interface KeepsakeControl {
 }
 
 export function bindKeepsake(elements: KeepsakeElements): KeepsakeControl {
-  const { button, status, statusText, again, share } = elements;
+  const { button, status, statusText, again } = elements;
   const text = copy.nameMelody;
 
   let name: string | null = null;
   let busy = false;
   /** URL del ultimo PNG, para «descargar de nuevo». Se libera al sustituirla. */
   let fileUrl: string | null = null;
-  /** El mismo PNG, listo para el menu de compartir, si el navegador lo admite. */
-  let sharedFile: File | null = null;
 
   const releaseFile = () => {
     if (fileUrl) URL.revokeObjectURL(fileUrl);
     fileUrl = null;
-    sharedFile = null;
     again.hidden = true;
     again.removeAttribute("href");
     again.removeAttribute("download");
-    if (share) share.hidden = true;
   };
 
   const say = (message: string | null) => {
@@ -79,25 +72,12 @@ export function bindKeepsake(elements: KeepsakeElements): KeepsakeControl {
       again.download = fileName;
       again.hidden = false;
       say(text.saved);
-
-      // Compartir usa exactamente el mismo PNG. Solo se ofrece si el navegador
-      // confirma que puede compartir ese archivo; si no, el boton no aparece.
-      sharedFile = shareableFile(blob, fileName);
-      if (share) share.hidden = sharedFile === null;
     } catch (error) {
       if (import.meta.env.DEV) console.error("[recuerdo] no se pudo generar:", error);
       say(text.saveError);
     } finally {
       setBusy(false);
     }
-  });
-
-  // navigator.share exige un gesto del usuario, por eso el menu se abre desde
-  // su propio boton y con el archivo ya generado: sin esperas entre medias.
-  share?.addEventListener("click", async () => {
-    if (!sharedFile) return;
-    const result = await shareFile(sharedFile);
-    if (result === "error") say(text.shareError);
   });
 
   return {

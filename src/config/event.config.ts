@@ -101,9 +101,6 @@ export const copy = {
     saved: "Tu recuerdo está listo.",
     saveAgain: "Descargar de nuevo",
     saveError: "No pudimos preparar tu recuerdo. Inténtalo de nuevo.",
-    share: "Compartir mi recuerdo",
-    shareLabel: "Compartir mi recuerdo bordado desde el menú del dispositivo",
-    shareError: "No se pudo abrir el menú para compartir. Puedes guardar la imagen y subirla desde tu galería.",
     hintTouch: "Toca una letra para escucharla.",
     hintPointer: "Pasa el cursor sobre cada letra.",
     /** `{letras}` se sustituye por las que aún no tienen pieza. */

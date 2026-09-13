@@ -189,10 +189,9 @@ ya no lo usa el código, pero sigue en disco hasta confirmar su eliminación.
 ### Guardar el nombre para historias
 
 «Guardar mi nombre» genera en el navegador un PNG de 1080 × 1920 con el nombre
-del invitado y la firma «Olivia Massiel», ambos con los WebP reales del alfabeto,
-sobre la plantilla aprobada (`public/images/recuerdo/`). Si el navegador puede
-compartir archivos, aparece además «Compartir mi recuerdo» con el menú nativo
-del dispositivo. Nada se envía a ningún servidor. El código está en
+del invitado compuesto con los WebP reales del alfabeto,
+sobre la plantilla aprobada (`public/images/recuerdo/`), y lo descarga. Nada se
+envía a ningún servidor. El código está en
 [src/keepsake/](src/keepsake/) y el original de la plantilla en
 `assets/reference/recuerdo-plantilla-aprobada.png`.
 

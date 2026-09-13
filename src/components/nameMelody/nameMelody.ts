@@ -66,7 +66,6 @@ export function initNameMelody(): void {
   const saveStatus = root.querySelector<HTMLElement>("[data-name-saved]");
   const saveText = root.querySelector<HTMLElement>("[data-name-saved-text]");
   const saveAgain = root.querySelector<HTMLAnchorElement>("[data-name-saved-again]");
-  const shareButton = root.querySelector<HTMLButtonElement>("[data-name-share]");
   const keepsake: KeepsakeControl | null =
     saveButton && saveStatus && saveText && saveAgain
       ? bindKeepsake({
@@ -74,7 +73,6 @@ export function initNameMelody(): void {
           status: saveStatus,
           statusText: saveText,
           again: saveAgain,
-          share: shareButton,
         })
       : null;
 
