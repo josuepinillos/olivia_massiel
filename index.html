@@ -288,7 +288,9 @@
         <div class="section__inner" data-reveal>
           <span class="ornament" aria-hidden="true">&#10038;</span>
           <p class="eyebrow">{{copy.nameMelody.eyebrow}}</p>
-          <h2 class="display display--lead">{{copy.nameMelody.title}}</h2>
+          <h2 class="display display--lead">
+            {{copy.nameMelody.titleLines.0}}<br />{{copy.nameMelody.titleLines.1}}<br />{{copy.nameMelody.titleLines.2}}
+          </h2>
           <p class="prose">{{copy.nameMelody.lead}}</p>
 
           <p class="name-melody__bridge">{{copy.nameMelody.bridge}}</p>
@@ -325,6 +327,35 @@
 
           <button type="button" class="button name-melody__play" data-name-play hidden>
             {{copy.nameMelody.play}}
+          </button>
+
+          <!-- Recuerdo para historias: se compone en el navegador con las mismas
+               piezas bordadas (src/keepsake). Nada se envia a ningun servidor. -->
+          <button
+            type="button"
+            class="button name-melody__save"
+            data-name-save
+            aria-label="{{copy.nameMelody.saveLabel}}"
+            hidden
+            disabled
+          >
+            {{copy.nameMelody.save}}
+          </button>
+          <p class="name-melody__saved" data-name-saved role="status" hidden>
+            <span data-name-saved-text></span>
+            <a class="name-melody__again" data-name-saved-again hidden
+              >{{copy.nameMelody.saveAgain}}</a
+            >
+          </p>
+          <!-- Solo aparece si el navegador puede compartir el PNG ya generado. -->
+          <button
+            type="button"
+            class="button name-melody__share"
+            data-name-share
+            aria-label="{{copy.nameMelody.shareLabel}}"
+            hidden
+          >
+            {{copy.nameMelody.share}}
           </button>
         </div>
       </section>

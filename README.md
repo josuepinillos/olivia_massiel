@@ -168,24 +168,33 @@ escribe su nombre y cada letra aparece como una pieza de crochet independiente:
 su propio `<button>`, su propia zona sensible, su propio estado y su propia nota.
 El contenedor solo coloca las piezas; nunca escucha eventos.
 
-Los assets están en `public/images/embroidered-letters/`, uno por letra, con la
-Ñ incluida. Para localizarlos, el texto se normaliza a NFC y se le quitan las
-tildes (JOSUÉ busca `E.webp` pero se sigue escribiendo con tilde); la Ñ no se
-pliega, porque tiene pieza propia.
+Las piezas salen de `public/images/olivia_massiel_letras_bordadas_webp/`, con
+una carpeta `mayusculas/` (A–Z y Ñ) y otra `minusculas/` (a–z y ñ). Se respeta la
+caja exacta de lo que se escribe: `Massiel` usa la M mayúscula y el resto en
+minúscula, `MASSIEL` solo mayúsculas. Las tildes se pliegan sin cambiar la caja
+(`é` busca `minusculas/e.webp`) y la Ñ y la ñ tienen pieza propia. Cada uno de
+los 54 caracteres tiene además su propia nota (`NOTE_FREQUENCIES` en
+[src/data/letterNotes.ts](src/data/letterNotes.ts)): la a y la A no suenan igual.
 
-**El paquete original venía mal troceado al final.** Se cortó con un paso de
-470 px sobre baldosas de 512, así que las últimas letras quedaron partidas entre
-archivos contiguos: la mitad derecha de la X vivía dentro de `Y.webp`, y la de
-la Y dentro de `Z.webp`. Ambas se recompusieron juntando sus mitades con ese
-mismo paso, de modo que son las letras originales, no una reinterpretación.
+Los WebP se sirven tal cual, sin sombras ni filtros. Todas las letras comparten
+una única escala, así que conservan sus proporciones reales (la a es más baja
+que la A). Sus medidas, y el descenso de g, j, p, q, y y Q bajo la línea base,
+están en [src/data/letterGlyphs.ts](src/data/letterGlyphs.ts). Si un nombre
+no cabe, la escala baja hasta que quepa.
 
-La Z se recortó de `public/images/alfabeto.png` —la lámina completa— separándola
-del fondo por difusión desde los bordes y escalándola a las proporciones de la
-familia. Otras siete (E F H L M S W) llegaron con un fragmento de la letra
-vecina pegado en un borde y se limpiaron conservando solo la letra.
+El alfabeto anterior (`public/images/embroidered-letters/`, más
+`public/images/alfabeto.png` y `assets/production/embroidered-letters-originales/`)
+ya no lo usa el código, pero sigue en disco hasta confirmar su eliminación.
 
-Los 27 archivos originales están sin tocar en
-`assets/production/embroidered-letters-originales/`.
+### Guardar el nombre para historias
+
+«Guardar mi nombre» genera en el navegador un PNG de 1080 × 1920 con el nombre
+del invitado y la firma «Olivia Massiel», ambos con los WebP reales del alfabeto,
+sobre la plantilla aprobada (`public/images/recuerdo/`). Si el navegador puede
+compartir archivos, aparece además «Compartir mi recuerdo» con el menú nativo
+del dispositivo. Nada se envía a ningún servidor. El código está en
+[src/keepsake/](src/keepsake/) y el original de la plantilla en
+`assets/reference/recuerdo-plantilla-aprobada.png`.
 
 ## El sonido
 

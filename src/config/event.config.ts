@@ -82,9 +82,11 @@ export const copy = {
     ],
   },
   nameMelody: {
-    eyebrow: "Tu nombre tiene una melodía",
-    title: "Escribe tu nombre y descubre cómo suena.",
-    lead: "Cada letra guarda una pequeña nota.",
+    /** Espacio de no separación en el nombre: si el rótulo parte, no parte a Olivia Massiel. */
+    eyebrow: "Interactúa con la invitación de Olivia Massiel",
+    /** Tres líneas fijas, una por gesto: escribir, bordar, escuchar. */
+    titleLines: ["Escribe tu nombre.", "Déjalo bordado.", "Escucha cómo suena."] as const,
+    lead: "Cada letra tiene su propio bordado y una pequeña nota musical.",
     /** Puente emocional con el nombre bordado de la fotografía del hero. */
     bridge:
       "Así como Olivia Massiel ya tiene su nombre bordado, tú también puedes crear el tuyo.",
@@ -92,6 +94,16 @@ export const copy = {
     placeholder: "Tu nombre",
     cta: "Crear mi nombre",
     play: "Escuchar mi melodía",
+    /** Recuerdo descargable para historias (1080 × 1920). */
+    save: "Guardar mi nombre",
+    saveLabel: "Guardar mi nombre bordado como imagen para historias",
+    saving: "Preparando tu recuerdo…",
+    saved: "Tu recuerdo está listo.",
+    saveAgain: "Descargar de nuevo",
+    saveError: "No pudimos preparar tu recuerdo. Inténtalo de nuevo.",
+    share: "Compartir mi recuerdo",
+    shareLabel: "Compartir mi recuerdo bordado desde el menú del dispositivo",
+    shareError: "No se pudo abrir el menú para compartir. Puedes guardar la imagen y subirla desde tu galería.",
     hintTouch: "Toca una letra para escucharla.",
     hintPointer: "Pasa el cursor sobre cada letra.",
     /** `{letras}` se sustituye por las que aún no tienen pieza. */

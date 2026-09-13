@@ -82,6 +82,8 @@
 /* --- Las piezas ----------------------------------------------------------- */
 
 .name-pieces {
+  /* Contenedor de consulta: la escala de las letras se mide contra su ancho. */
+  container-type: inline-size;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
@@ -95,22 +97,48 @@
   margin-top: 0;
 }
 
+/*
+ * Escala común de las piezas: cuántos px de pantalla ocupa cada px del WebP.
+ *
+ * Todas las letras la comparten, así que la a queda más baja que la A y la l
+ * más alta que la a, como en el alfabeto original, sin forzar ninguna a una
+ * proporción que no es la suya.
+ *
+ * - Tamaño normal: la mayúscula queda con el mismo alto visible que tenían las
+ *   piezas anteriores. Aquellas ocupaban el 83 % de su baldosa de 512 px con
+ *   `clamp(3.5rem, 13vw, 5.5rem)`; estas vienen recortadas al contorno y su
+ *   mayúscula media, con margen, mide 217 px. De ahí el divisor 247.
+ * - Nombres largos: si la palabra más ancha (`--name-units`, calculada en
+ *   nameMelody.ts) no cabe en el contenedor, la escala baja hasta que quepa,
+ *   con un rem de holgura para la leve inclinación de cada pieza.
+ * - Suelo: 2rem de mayúscula. Basta para nombres de once letras anchas
+ *   (Bartholomew) en 375 px; por debajo las letras dejan de leerse, y a partir
+ *   de ahí la palabra pasa a la línea siguiente.
+ */
 .name-word {
+  --glyph-scale: max(
+    calc(2rem / 247),
+    min(
+      calc(clamp(3.5rem, 13vw, 5.5rem) / 247),
+      calc((100cqw - 1rem) / var(--name-units, 1))
+    )
+  );
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   justify-content: center;
-  gap: 0.25rem;
+  gap: calc(var(--glyph-gap, 4) * var(--glyph-scale));
 }
 
 .name-letter {
   --tilt: 0deg;
   --lift: 0px;
+  position: relative;
   display: grid;
   place-items: end center;
-  /* Ancho mínimo del objetivo táctil: la I es mucho más estrecha que la M. */
-  min-width: 44px;
   min-height: 44px;
+  /* Las letras con descendente bajan de la línea base, como en tipografía. */
+  margin-bottom: calc(var(--glyph-descent, 0) * var(--glyph-scale) * -1);
   padding: 0;
   border: 0;
   background: transparent;
@@ -124,20 +152,29 @@
   touch-action: manipulation;
 }
 
+/*
+ * Objetivo táctil de 44 px como mínimo, sin ensanchar la caja.
+ *
+ * Antes era un `min-width: 44px` en la pieza, que con las nuevas letras (la i
+ * mide menos de 30 px) abría huecos visibles en mitad de la palabra. Ahora la
+ * zona sensible se extiende por los lados solo cuando la pieza es más estrecha
+ * que eso, y la composición no cambia.
+ */
+.name-letter::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline: min(0px, calc((100% - 44px) / 2));
+}
+
+/* El WebP se muestra tal cual: sin sombra, filtro ni fondo. Solo se escala. */
 .name-letter__art {
-  height: clamp(3.5rem, 13vw, 5.5rem);
+  height: calc(var(--glyph-h, 217) * var(--glyph-scale));
   width: auto;
   max-width: none;
   pointer-events: none;
   -webkit-user-drag: none;
   user-select: none;
-  filter: drop-shadow(0 6px 10px rgb(90 70 58 / 0.1));
-  transition: filter 320ms var(--ease-soft);
-}
-
-.name-letter:hover .name-letter__art,
-.name-letter:focus-visible .name-letter__art {
-  filter: drop-shadow(0 10px 16px rgb(90 70 58 / 0.18));
 }
 
 .name-letter:focus-visible {
@@ -231,6 +268,54 @@
 
 .name-melody__play {
   margin-top: clamp(1.5rem, 4vw, 2rem);
+}
+
+/*
+ * Guardar el recuerdo: el mismo botón de contorno que «Escuchar mi melodía»,
+ * justo debajo y siempre en su propia línea, para que se lean como pareja.
+ */
+.name-melody__save,
+.name-melody__share {
+  display: flex;
+  width: fit-content;
+  margin: 0.875rem auto 0;
+}
+
+/* Mientras se prepara la imagen queda deshabilitado; sin el relleno rosa que
+   el sistema general da al hover de un botón deshabilitado. */
+.name-melody__save:disabled:hover {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--taupe-deep);
+  translate: 0 0;
+}
+
+.name-melody__saved {
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--taupe-soft);
+}
+
+.name-melody__again {
+  margin-left: 0.375rem;
+  color: var(--taupe-deep);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: var(--line-strong);
+  cursor: pointer;
+}
+
+.name-melody__again:hover {
+  color: var(--blush-ink);
+  text-decoration-color: var(--blush-ink);
+}
+
+.name-melody__again:focus-visible {
+  outline: 2px solid var(--blush-ink);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 @media (min-width: 1024px) {

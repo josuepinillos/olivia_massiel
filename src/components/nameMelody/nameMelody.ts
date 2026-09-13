@@ -14,23 +14,40 @@
 import { playNote } from "../../audio/musicBox";
 import { prefersReducedMotion } from "../../motion/reducedMotion";
 import { copy } from "../../config/event.config";
+import { bindKeepsake, type KeepsakeControl } from "../../keepsake/keepsakeControl";
 import {
-  assetFor,
   foldLetter,
+  glyphFor,
   isLetter,
+  letterKey,
   noteFor,
   UNAVAILABLE,
+  type Glyph,
 } from "../../data/letterNotes";
 
 const MAX_LENGTH = 24;
 const MELODY_GAP_MS = 300;
 const PRESS_MS = 520;
 
+/**
+ * Separacion entre piezas, en pixeles del WebP. Se suma al margen transparente
+ * que ya trae cada archivo y escala con las letras, de modo que un nombre
+ * reducido para caber conserva el mismo ritmo.
+ */
+const GLYPH_GAP = 4;
+
+/** Ancho nominal de una pieza de espera, solo para el calculo de encaje. */
+const PENDING_WIDTH = 180;
+
 interface Piece {
-  /** Como se muestra: conserva la tilde. */
+  /** Como se escribio: conserva la caja y la tilde. */
   readonly shown: string;
-  /** Como se busca el asset: sin tilde, con Ñ intacta. */
+  /** Plegada a mayuscula y sin tilde: marca las letras sin pieza. */
   readonly folded: string;
+  /** Caja exacta y sin tilde (`M`, `m`, `ñ`): decide la nota. */
+  readonly key: string;
+  /** Pieza bordada de su misma caja, o null si falta. */
+  readonly glyph: Glyph | null;
 }
 
 export function initNameMelody(): void {
@@ -42,6 +59,24 @@ export function initNameMelody(): void {
   const missing = root?.querySelector<HTMLElement>("[data-name-missing]");
   const play = root?.querySelector<HTMLButtonElement>("[data-name-play]");
   if (!root || !form || !input || !stage || !hint || !missing || !play) return;
+
+  // Guardar el recuerdo es opcional: si faltara su marcado, la seccion sigue
+  // funcionando igual.
+  const saveButton = root.querySelector<HTMLButtonElement>("[data-name-save]");
+  const saveStatus = root.querySelector<HTMLElement>("[data-name-saved]");
+  const saveText = root.querySelector<HTMLElement>("[data-name-saved-text]");
+  const saveAgain = root.querySelector<HTMLAnchorElement>("[data-name-saved-again]");
+  const shareButton = root.querySelector<HTMLButtonElement>("[data-name-share]");
+  const keepsake: KeepsakeControl | null =
+    saveButton && saveStatus && saveText && saveAgain
+      ? bindKeepsake({
+          button: saveButton,
+          status: saveStatus,
+          statusText: saveText,
+          again: saveAgain,
+          share: shareButton,
+        })
+      : null;
 
   input.maxLength = MAX_LENGTH;
 
@@ -69,14 +104,19 @@ export function initNameMelody(): void {
     // El escalonado de aparicion (55 ms) lo aplica el CSS a partir de --i.
     button.style.setProperty("--i", String(index));
 
-    const src = assetFor(piece.folded);
-    if (src) {
+    const { glyph } = piece;
+    if (glyph) {
+      // Alto y descenso en pixeles del WebP; el CSS los multiplica por la escala
+      // comun. El ancho no se fija: sale solo de la proporcion de la imagen.
+      button.style.setProperty("--glyph-h", String(glyph.height));
+      button.style.setProperty("--glyph-descent", String(glyph.descent));
+
       const img = document.createElement("img");
       img.className = "name-letter__art";
-      img.src = src;
+      img.src = glyph.src;
       img.alt = "";
-      img.width = 512;
-      img.height = 512;
+      img.width = glyph.width;
+      img.height = glyph.height;
       // Carga inmediata, no diferida: estas piezas son exactamente las que el
       // visitante acaba de pedir y estan a la vista. El ahorro del que habla el
       // brief ya se consigue de otra forma — ninguna letra se descarga hasta
@@ -96,7 +136,7 @@ export function initNameMelody(): void {
       button.dataset.pending = "true";
     }
 
-    const note = noteFor(piece.folded);
+    const note = noteFor(piece.key);
     // Identificador propio por posicion: dos "A" del mismo nombre son piezas
     // distintas y ninguna silencia a la otra.
     const sourceId = `nombre:${index}`;
@@ -144,21 +184,35 @@ export function initNameMelody(): void {
 
     let index = 0;
     const pending = new Set<string>();
+    /** Ancho de la palabra mas larga, en pixeles del WebP. */
+    let widestWord = 0;
 
     for (const word of words) {
       const group = document.createElement("span");
       group.className = "name-word";
+      let wordWidth = 0;
 
-      for (const character of Array.from(word)) {
+      // NFC antes de trocear: una ñ escrita como n + tilde suelta seria dos
+      // caracteres, y la tilde sola no tiene pieza.
+      for (const character of Array.from(word.normalize("NFC"))) {
         const folded = foldLetter(character);
         if (!isLetter(folded)) continue; // numeros y signos no tienen pieza
         if (UNAVAILABLE.has(folded)) pending.add(folded);
-        group.append(buildLetter({ shown: character.toUpperCase(), folded }, index));
+        const glyph = glyphFor(character);
+        const key = letterKey(character) ?? folded;
+        group.append(buildLetter({ shown: character, folded, key, glyph }, index));
+        wordWidth += (glyph?.width ?? PENDING_WIDTH) + (wordWidth > 0 ? GLYPH_GAP : 0);
         index += 1;
       }
 
       if (group.childElementCount > 0) stage.append(group);
+      widestWord = Math.max(widestWord, wordWidth);
     }
+
+    // La palabra mas larga decide si hay que reducir. Todas las del nombre
+    // comparten escala, asi que OLIVIA y MASSIEL siempre miden igual de alto.
+    stage.style.setProperty("--name-units", String(Math.max(widestWord, 1)));
+    stage.style.setProperty("--glyph-gap", String(GLYPH_GAP));
 
     // La clase de entrada se pone tras insertar, no en la construccion: asi la
     // animacion arranca con las piezas ya en el documento.
@@ -177,6 +231,7 @@ export function initNameMelody(): void {
       : copy.nameMelody.hintTouch;
 
     play.hidden = !hasPieces;
+    keepsake?.setName(hasPieces ? words.join(" ") : null);
 
     if (pending.size > 0) {
       missing.hidden = false;
@@ -198,10 +253,10 @@ export function initNameMelody(): void {
       const id = window.setTimeout(() => {
         const label = letter.getAttribute("aria-label") ?? "";
         const shown = label.replace("Letra ", "");
-        const folded = foldLetter(shown);
+        const key = letterKey(shown) ?? foldLetter(shown);
         // Identificador por posicion en la melodia: si el nombre repite una
         // letra, la segunda no cae dentro del enfriamiento de la primera.
-        void playNote(noteFor(folded), `melodia:${position}`);
+        void playNote(noteFor(key), `melodia:${position}`);
 
         if (prefersReducedMotion()) return;
         letter.classList.add("is-playing");
